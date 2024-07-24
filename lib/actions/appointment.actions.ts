@@ -100,9 +100,36 @@ export const updateAppointment = async ({
 
     // TODO: add SMS alert
 
+    const smsMessage = `
+
+Hi, it's carepulse,
+${
+  type === "schedule"
+    ? `Your appointment has been scheduled for ${formatDateTime(
+        appointment.schedule
+      ).dateTime} with DR. ${appointment.primaryPhysician}`
+    : `We regret to inform you that your appointment has been cancelled for the following reason.
+  Reason: ${appointment.cancellationReason}`
+}`;
+    await sendSmsNotification(userId, smsMessage);
     revalidatePath("/admin");
     return parseStringify(updateAppointment);
   } catch (error) {
     console.log("Error while updating the appointment", error);
+  }
+};
+
+export const sendSmsNotification = async (userId: string, content: string) => {
+  try {
+    const message = await messaging.createSms(
+      ID.unique(),
+      content,
+      [],
+      [userId]
+    );
+
+    return parseStringify(message);
+  } catch (error) {
+    console.log("error while sending message: ", error);
   }
 };
