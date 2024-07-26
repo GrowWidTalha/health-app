@@ -17,7 +17,7 @@ import {
   IdentificationTypes,
   PatientFormDefaultValues,
 } from "@/constants";
-import { registerPatient } from "@/lib/actions/patient.actions";
+import { registerPatient } from "@/actions/patient.actions";
 import { PatientFormValidation } from "@/lib/validation";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -25,22 +25,30 @@ import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import { FileUploader } from "../FileUploader";
 import SubmitButton from "../SubmitButton";
+import { Patient } from "@/types/appwrite.types";
+import Link from "next/link";
 
-const RegisterForm = ({ user }: { user: User }) => {
+const RegisterForm = ({
+  user,
+  isReadOnly,
+  patient,
+}: {
+  user?: User;
+  patient?: Patient;
+  isReadOnly?: boolean;
+}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
     defaultValues: {
-      ...PatientFormDefaultValues,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
+      ...(user ? user : patient),
     },
   });
 
   const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
+    if (!user) return;
     setIsLoading(true);
 
     // Store file info in form data as
@@ -103,10 +111,12 @@ const RegisterForm = ({ user }: { user: User }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex-1 space-y-12"
       >
-        <section className="space-y-4">
-          <h1 className="header">Welcome 👋</h1>
-          <p className="text-dark-700">Let us know more about yourself.</p>
-        </section>
+        {!isReadOnly && (
+          <section className="space-y-4">
+            <h1 className="header">Welcome 👋</h1>
+            <p className="text-dark-700">Let us know more about yourself.</p>
+          </section>
+        )}
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
@@ -122,6 +132,7 @@ const RegisterForm = ({ user }: { user: User }) => {
             placeholder="John Doe"
             iconSrc="/assets/icons/user.svg"
             iconAlt="user"
+            disabled={isReadOnly}
           />
 
           {/* EMAIL & PHONE */}
@@ -134,6 +145,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               placeholder="johndoe@gmail.com"
               iconSrc="/assets/icons/email.svg"
               iconAlt="email"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -142,6 +154,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="phone"
               label="Phone Number"
               placeholder="(555) 123-4567"
+              disabled={isReadOnly}
             />
           </div>
 
@@ -152,6 +165,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               control={form.control}
               name="birthDate"
               label="Date of birth"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -159,12 +173,14 @@ const RegisterForm = ({ user }: { user: User }) => {
               control={form.control}
               name="gender"
               label="Gender"
+              disabled={isReadOnly}
               renderSkeleton={(field) => (
                 <FormControl>
                   <RadioGroup
                     className="flex h-11 gap-6 xl:justify-between"
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    disabled={isReadOnly}
                   >
                     {GenderOptions.map((option, i) => (
                       <div key={option + i} className="radio-group">
@@ -188,6 +204,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="address"
               label="Address"
               placeholder="14 street, New york, NY - 5101"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -196,6 +213,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="occupation"
               label="Occupation"
               placeholder=" Software Engineer"
+              disabled={isReadOnly}
             />
           </div>
 
@@ -207,6 +225,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="emergencyContactName"
               label="Emergency contact name"
               placeholder="Guardian's name"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -215,6 +234,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="emergencyContactNumber"
               label="Emergency contact number"
               placeholder="(555) 123-4567"
+              disabled={isReadOnly}
             />
           </div>
         </section>
@@ -231,9 +251,14 @@ const RegisterForm = ({ user }: { user: User }) => {
             name="primaryPhysician"
             label="Primary care physician"
             placeholder="Select a physician"
+            disabled={isReadOnly}
           >
             {Doctors.map((doctor, i) => (
-              <SelectItem key={doctor.name + i} value={doctor.name}>
+              <SelectItem
+                key={doctor.name + i}
+                value={doctor.name}
+                disabled={isReadOnly}
+              >
                 <div className="flex cursor-pointer items-center gap-2">
                   <Image
                     src={doctor.image}
@@ -256,6 +281,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="insuranceProvider"
               label="Insurance provider"
               placeholder="BlueCross BlueShield"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -264,6 +290,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="insurancePolicyNumber"
               label="Insurance policy number"
               placeholder="ABC123456789"
+              disabled={isReadOnly}
             />
           </div>
 
@@ -275,6 +302,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="allergies"
               label="Allergies (if any)"
               placeholder="Peanuts, Penicillin, Pollen"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -283,6 +311,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="currentMedication"
               label="Current medications"
               placeholder="Ibuprofen 200mg, Levothyroxine 50mcg"
+              disabled={isReadOnly}
             />
           </div>
 
@@ -294,6 +323,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="familyMedicalHistory"
               label=" Family medical history (if relevant)"
               placeholder="Mother had brain cancer, Father has hypertension"
+              disabled={isReadOnly}
             />
 
             <CustomFormField
@@ -302,13 +332,14 @@ const RegisterForm = ({ user }: { user: User }) => {
               name="pastMedicalHistory"
               label="Past medical history"
               placeholder="Appendectomy in 2015, Asthma diagnosis in childhood"
+              disabled={isReadOnly}
             />
           </div>
         </section>
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Identification and Verfication</h2>
+            <h2 className="sub-header">Identification and Verification</h2>
           </div>
 
           <CustomFormField
@@ -317,9 +348,10 @@ const RegisterForm = ({ user }: { user: User }) => {
             name="identificationType"
             label="Identification Type"
             placeholder="Select identification type"
+            disabled={isReadOnly}
           >
             {IdentificationTypes.map((type, i) => (
-              <SelectItem key={type + i} value={type}>
+              <SelectItem key={type + i} value={type} disabled={isReadOnly}>
                 {type}
               </SelectItem>
             ))}
@@ -331,51 +363,67 @@ const RegisterForm = ({ user }: { user: User }) => {
             name="identificationNumber"
             label="Identification Number"
             placeholder="123456789"
+            disabled={isReadOnly}
           />
-
-          <CustomFormField
-            fieldType={FormFieldType.SKELETON}
-            control={form.control}
-            name="identificationDocument"
-            label="Scanned Copy of Identification Document"
-            renderSkeleton={(field) => (
-              <FormControl>
-                <FileUploader files={field.value} onChange={field.onChange} />
-              </FormControl>
-            )}
-          />
+          {isReadOnly && patient ? (
+            <Link href={patient.identificationDocumentURL}  target="_blank"> 
+            <Image
+              src={patient.identificationDocumentURL!}
+              alt={"data"}
+              height={400}
+              width={800}
+              className="cursor-pointer mt-4"
+              />
+              </Link>
+          ) : (
+            <CustomFormField
+              fieldType={FormFieldType.SKELETON}
+              control={form.control}
+              name="identificationDocument"
+              label="Scanned Copy of Identification Document"
+              disabled={isReadOnly}
+              renderSkeleton={(field) => (
+                <FormControl>
+                  <FileUploader files={field.value} onChange={field.onChange} />
+                </FormControl>
+              )}
+            />
+          )}
         </section>
+        {!isReadOnly && (
+          <section className="space-y-6">
+            <div className="mb-9 space-y-1">
+              <h2 className="sub-header">Consent and Privacy</h2>
+            </div>
 
-        <section className="space-y-6">
-          <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Consent and Privacy</h2>
-          </div>
+            <CustomFormField
+              fieldType={FormFieldType.CHECKBOX}
+              control={form.control}
+              name="treatmentConsent"
+              label="I consent to receive treatment for my health condition."
+            />
 
-          <CustomFormField
-            fieldType={FormFieldType.CHECKBOX}
-            control={form.control}
-            name="treatmentConsent"
-            label="I consent to receive treatment for my health condition."
-          />
+            <CustomFormField
+              fieldType={FormFieldType.CHECKBOX}
+              control={form.control}
+              name="disclosureConsent"
+              label="I consent to the use and disclosure of my health
+     information for treatment purposes."
+            />
 
-          <CustomFormField
-            fieldType={FormFieldType.CHECKBOX}
-            control={form.control}
-            name="disclosureConsent"
-            label="I consent to the use and disclosure of my health
-            information for treatment purposes."
-          />
+            <CustomFormField
+              fieldType={FormFieldType.CHECKBOX}
+              control={form.control}
+              name="privacyConsent"
+              label="I acknowledge that I have reviewed and agree to the
+     privacy policy"
+            />
+          </section>
+        )}
 
-          <CustomFormField
-            fieldType={FormFieldType.CHECKBOX}
-            control={form.control}
-            name="privacyConsent"
-            label="I acknowledge that I have reviewed and agree to the
-            privacy policy"
-          />
-        </section>
-
-        <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
+        {!isReadOnly && (
+          <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
+        )}
       </form>
     </Form>
   );

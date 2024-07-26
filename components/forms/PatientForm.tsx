@@ -7,16 +7,30 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Form } from "@/components/ui/form";
-import { createUser } from "@/lib/actions/patient.actions";
+// import { createUser } from "@/lib/actions/patient.actions";
 import { UserFormValidation } from "@/lib/validation";
 
 import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
+import appwriteService, { account } from "@/hooks/auth.lib";
+import { ID } from "appwrite";
+import { useAppwrite } from "@/hooks/useAppwrite";
+import { users } from "@/lib/appwrite.config";
+import { updateLabel } from "@/actions/auth.actions";
 
 export const PatientForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { isLoggedIn, user } = useAppwrite();
+
+  if (isLoggedIn) {
+    const path =
+      user.labels[0] === "admin"
+        ? "/admin"
+        : `/patients/${user.$id}/new-appointment`;
+    router.push(path);
+  }
 
   const form = useForm<z.infer<typeof UserFormValidation>>({
     resolver: zodResolver(UserFormValidation),
@@ -48,7 +62,18 @@ export const PatientForm = () => {
 
     setIsLoading(false);
   };
-
+  const createUser = async (user: CreateUserParams) => {
+    try {
+      const userData = await appwriteService.createUserAccount({
+        email: user.email,
+        password: user.phone,
+        name: user.name,
+      });
+      return userData;
+    } catch (error: any) {
+      console.error("An error occurred while creating a new user:", error);
+    }
+  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">

@@ -9,8 +9,8 @@ import {
   DATABASE_ID,
   databases,
   messaging,
-} from "../appwrite.config";
-import { formatDateTime, parseStringify } from "../utils";
+} from "../lib/appwrite.config";
+import { formatDateTime, parseStringify } from "../lib/utils";
 import { revalidatePath } from "next/cache";
 
 //  CREATE APPOINTMENT

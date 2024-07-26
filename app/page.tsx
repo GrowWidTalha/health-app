@@ -7,6 +7,7 @@ import PasskeyModal  from "@/components/PassKeyModal";
 const Home = ({ searchParams }: SearchParamProps) => {
   const isAdmin = searchParams?.admin === "true";
 
+
   return (
     <div className="flex h-screen max-h-screen">
       {isAdmin && <PasskeyModal />}

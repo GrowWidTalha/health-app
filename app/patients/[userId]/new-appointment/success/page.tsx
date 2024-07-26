@@ -3,10 +3,10 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Doctors } from "@/constants";
-import { getAppointment } from "@/lib/actions/appointment.actions";
+import { getAppointment } from "@/actions/appointment.actions";
 import { formatDateTime } from "@/lib/utils";
 import * as Sentry from "@sentry/nextjs";
-import { getUser } from "@/lib/actions/patient.actions";
+import { getUser } from "@/actions/patient.actions";
 
 const RequestSuccess = async ({
   searchParams,
@@ -16,7 +16,7 @@ const RequestSuccess = async ({
   const appointment = await getAppointment(appointmentId);
   const user = await getUser(userId);
 
-  Sentry.metrics.set("user_view_appointment-success", user.name);
+  Sentry.metrics.set("user_view_appointment-success", user?.name!);
 
 
   const doctor = Doctors.find(

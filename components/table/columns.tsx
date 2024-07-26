@@ -17,15 +17,10 @@ import { formatDateTime } from "@/lib/utils";
 import { Doctors } from "@/constants";
 import Image from "next/image";
 import AppointmentModal from "../AppointmentModal";
+import Link from "next/link";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
 
 export const columns: ColumnDef<Appointment>[] = [
   {
@@ -34,10 +29,15 @@ export const columns: ColumnDef<Appointment>[] = [
   },
   {
     accessorKey: "patient",
+    header: "Patient",
     cell: ({ row }) => {
       const appointment = row.original;
 
-      return <p className="text-14-medium">{appointment?.patient?.name}</p>;
+      return (
+        <Link href={`/patients/${appointment.userId}`} >
+          <p className="text-14-medium underline">{appointment?.patient?.name}</p>
+        </Link>
+      );
     },
   },
   {

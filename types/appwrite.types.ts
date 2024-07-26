@@ -22,6 +22,7 @@ export interface Patient extends Models.Document {
   identificationNumber: string | undefined;
   identificationDocument: FormData | undefined;
   privacyConsent: boolean;
+  identificationDocumentURL: string;
 }
 
 export interface Appointment extends Models.Document {

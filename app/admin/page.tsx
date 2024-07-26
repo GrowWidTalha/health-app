@@ -1,7 +1,8 @@
+import NavBar from "@/components/NavBar";
 import StatCard from "@/components/StatCard";
-import { columns, Payment } from "@/components/table/columns";
+import { columns } from "@/components/table/columns";
 import { DataTable } from "@/components/table/DataTable";
-import { getRecentAppointmentsList } from "@/lib/actions/appointment.actions";
+import { getRecentAppointmentsList } from "@/actions/appointment.actions";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -10,19 +11,7 @@ const AdminPage = async () => {
   const appointments = await getRecentAppointmentsList();
   return (
     <div className="flex flex-col mx-auto max-w-7xl space-y-14">
-      <header className="admin-header">
-        <Link href={"/"}>
-          <Image
-            src={"/assets/icons/logo-full.svg"}
-            alt="logo"
-            height={32}
-            width={162}
-            className="h-8 w-fit"
-          />
-        </Link>
-
-        <p className="text-16-semibold">Admin Dashboard</p>
-      </header>
+    <NavBar text="Admin Dashboard"/>
       <main className="admin-main">
         <section className="w-full space-y-4">
           <h1 className="header">Welcome Admin👋</h1>

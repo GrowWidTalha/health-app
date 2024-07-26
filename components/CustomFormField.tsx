@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import {E164Number}  from "libphonenumber-js";
+import { E164Number } from "libphonenumber-js";
 import Image from "next/image";
 import ReactDatePicker from "react-datepicker";
 import { Control } from "react-hook-form";
@@ -59,6 +59,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
           <FormControl>
             <Input
               placeholder={props.placeholder}
+              disabled={props.disabled}
               {...field}
               className="shad-input border-0"
             />
@@ -71,6 +72,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
           <Textarea
             placeholder={props.placeholder}
             {...field}
+            value={field.value}
             className="shad-textArea"
             disabled={props.disabled}
           />
@@ -82,6 +84,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
           <PhoneInput
             defaultCountry="US"
             placeholder={props.placeholder}
+            disabled={props.disabled}
             international
             withCountryCallingCode
             value={field.value as E164Number | undefined}
@@ -97,6 +100,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             <Checkbox
               id={props.name}
               checked={field.value}
+              disabled={props.disabled}
               onCheckedChange={field.onChange}
             />
             <label htmlFor={props.name} className="checkbox-label">
@@ -117,6 +121,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
           />
           <FormControl>
             <ReactDatePicker
+              disabled={props.disabled}
               showTimeSelect={props.showTimeSelect ?? false}
               selected={field.value}
               onChange={(date: Date) => field.onChange(date)}
@@ -130,7 +135,12 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
     case FormFieldType.SELECT:
       return (
         <FormControl>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            disabled={props.disabled}
+            
+          >
             <FormControl>
               <SelectTrigger className="shad-select-trigger">
                 <SelectValue placeholder={props.placeholder} />
