@@ -25,13 +25,13 @@ const RequestSuccess = async ({
   if(!doctor) return null;
 
   const event = {
-    title: `ppointment with 1 ${doctor.name}`,
+    title: `appointment with 1 ${doctor.name}`,
     description: `Reason: ${appointment.reason}`,
     start: formatDateTime(appointment.schedule).dateTime,
     duration: [1, "hour"],
     guests: [doctor.email]
   };
-  
+
   const eventLink = google({
     title: `Appointment with ${doctor.name}`,
     description: `Reason: ${appointment.reason}`,
@@ -40,7 +40,7 @@ const RequestSuccess = async ({
     guests: [doctor.email]
   })
   console.log(eventLink);
-  
+
   return (
     <div className=" flex h-screen max-h-screen px-[5%]">
       <div className="success-img">

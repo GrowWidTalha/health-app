@@ -21,9 +21,10 @@ import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { Form, FormControl } from "../ui/form";
 import { getAllDoctors } from "@/actions/doctors.actions";
-import { Status } from "@/types";
+import { CreateAppointmentParams, Status } from "@/types";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
+import PaymentConfirmationModal from "../modals/PaymentConfirmationModal";
 
 export const AppointmentForm = ({
   userId,
@@ -41,7 +42,8 @@ export const AppointmentForm = ({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>();
-
+  const [onlineModalOpen, setOnlineModalOpen] = useState(false)
+  const [appointmentData, setAppointmentData] = useState<CreateAppointmentParams>()
   useEffect(() => {
     const fetchDoctors = async () => {
       const docs = await getAllDoctors();
@@ -97,6 +99,13 @@ export const AppointmentForm = ({
           doctorid: doctor?.$id!,
           appointmentType: values.appointmentType!,
         };
+
+        if(values.appointmentType === "online"){
+            setOnlineModalOpen(true)
+            setAppointmentData(appointment)
+            setIsLoading(false)
+            return;
+        }
 
         const newAppointment = await createAppointment(appointment);
 
@@ -186,7 +195,7 @@ export const AppointmentForm = ({
                   </SelectItem>
                 ))}
             </CustomFormField>
-
+<PaymentConfirmationModal open={onlineModalOpen} setOpen={setOnlineModalOpen} appointment={appointmentData!}/>
             <CustomFormField
               fieldType={FormFieldType.DATE_PICKER}
               control={form.control}

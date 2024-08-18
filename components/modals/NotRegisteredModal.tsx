@@ -28,7 +28,7 @@ const NotRegisteredModal = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Registration Pending</AlertDialogTitle>
           <AlertDialogDescription>
-            Dear patient you've not filled the registration form. Please fill
+            Dear patient you&apos;ve not filled the registration form. Please fill
             that first.
           </AlertDialogDescription>
         </AlertDialogHeader>
