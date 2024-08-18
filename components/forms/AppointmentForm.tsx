@@ -97,9 +97,10 @@ export const AppointmentForm = ({
           status: status as Status,
           note: values.note,
           doctorid: doctor?.$id!,
+        //   @ts-ignore
           appointmentType: values.appointmentType!,
         };
-
+        // @ts-ignore
         if(values.appointmentType === "online"){
             setOnlineModalOpen(true)
             setAppointmentData(appointment)
