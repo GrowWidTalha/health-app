@@ -87,7 +87,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             placeholder={props.placeholder}
             disabled={props.disabled}
             international
-            withCountryCallingCode 
+            withCountryCallingCode
             value={field.value as E164Number | undefined}
             onChange={field.onChange}
             className="mt-2 h-11 rounded-md px-3 text-sm border bg-dark-400 placeholder:text-dark-600 border-dark-500 !important"
@@ -125,6 +125,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               disabled={props.disabled}
               showTimeSelect={props.showTimeSelect ?? false}
               selected={field.value}
+              // @ts-ignore
               onChange={(date: Date) => field.onChange(date)}
               timeInputLabel="Time:"
               dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
@@ -140,7 +141,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             onValueChange={field.onChange}
             defaultValue={field.value}
             disabled={props.disabled}
-            
+
           >
             <FormControl>
               <SelectTrigger className="shad-select-trigger">
