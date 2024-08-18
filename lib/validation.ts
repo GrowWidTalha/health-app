@@ -1,3 +1,4 @@
+import { Doctor } from "@/types/appwrite.types";
 import { z } from "zod";
 
 export const UserFormValidation = z.object({
@@ -40,7 +41,6 @@ export const PatientFormValidation = z.object({
       (emergencyContactNumber) => /^\+\d{10,15}$/.test(emergencyContactNumber),
       "Invalid phone number"
     ),
-  primaryPhysician: z.string().min(2, "Select at least one doctor"),
   insuranceProvider: z
     .string()
     .min(2, "Insurance name must be at least 2 characters")
@@ -77,7 +77,7 @@ export const PatientFormValidation = z.object({
 });
 
 export const CreateAppointmentSchema = z.object({
-  primaryPhysician: z.string().min(2, "Select at least one doctor"),
+  doctor: z.string(),
   schedule: z.coerce.date(),
   reason: z
     .string()
@@ -85,18 +85,20 @@ export const CreateAppointmentSchema = z.object({
     .max(500, "Reason must be at most 500 characters"),
   note: z.string().optional(),
   cancellationReason: z.string().optional(),
+  appointmentType: z.enum(["online", 'offline'])
 });
 
 export const ScheduleAppointmentSchema = z.object({
-  primaryPhysician: z.string().min(2, "Select at least one doctor"),
+  doctor: z.string(),
   schedule: z.coerce.date(),
   reason: z.string().optional(),
   note: z.string().optional(),
+  appointmentType: z.enum(["online", "offline"]),
   cancellationReason: z.string().optional(),
 });
 
 export const CancelAppointmentSchema = z.object({
-  primaryPhysician: z.string().min(2, "Select at least one doctor"),
+  doctor: z.string(),
   schedule: z.coerce.date(),
   reason: z.string().optional(),
   note: z.string().optional(),
@@ -116,3 +118,19 @@ export function getAppointmentSchema(type: string) {
       return ScheduleAppointmentSchema;
   }
 }
+
+
+export const createDoctorSchema = z.object({
+  name: z.string().min(2, "Name must be greater than 2 characters"),
+  email: z.string().email("Invalid email address"),
+  phone: z
+    .string()
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+  areaOfExpertise: z.string().min(2,  "area of expertise must be greater than 2 characters"),
+  avatar: z.custom<File[]>().optional() ,
+
+})
+
+export const createRequestSchema = z.object({
+  reason: z.string().min(10, "Reason must be atleast 10 characters"),
+})

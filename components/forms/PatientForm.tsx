@@ -2,36 +2,33 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Form } from "@/components/ui/form";
-// import { createUser } from "@/lib/actions/patient.actions";
 import { UserFormValidation } from "@/lib/validation";
 
 import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import appwriteService, { account } from "@/hooks/auth.lib";
-import { ID } from "appwrite";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { users } from "@/lib/appwrite.config";
-import { updateLabel } from "@/actions/auth.actions";
+import { CreateUserParams } from "@/types";
 
 export const PatientForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { isLoggedIn, user } = useAppwrite();
-
-  if (isLoggedIn) {
-    const path =
-      user.labels[0] === "admin"
-        ? "/admin"
-        : `/patients/${user.$id}/new-appointment`;
-    router.push(path);
-  }
-
+  const { isLoggedIn, user, loading} = useAppwrite();
+  useEffect(() => {
+    if (isLoggedIn) {
+      const isAdmin = user.labels[0] === "admin"
+      const isDoctor = user.labels[0] === "doctor"
+      const path =
+      isAdmin ? "/admin" : isDoctor ? `/doctor/${user.$id}` : `/patients/${user.$id}/dashboard`;
+      router.push(path);
+    }
+  }, [isLoggedIn, loading])
   const form = useForm<z.infer<typeof UserFormValidation>>({
     resolver: zodResolver(UserFormValidation),
     defaultValues: {
@@ -74,6 +71,9 @@ export const PatientForm = () => {
       console.error("An error occurred while creating a new user:", error);
     }
   };
+  // if(loading) return "loading...."
+
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">

@@ -9,9 +9,10 @@ import { convertFileToUrl } from "@/lib/utils";
 type FileUploaderProps = {
   files: File[] | undefined;
   onChange: (files: File[]) => void;
+  defaultValue?: string;
 };
 
-export const FileUploader = ({ files, onChange }: FileUploaderProps) => {
+export const FileUploader = ({ files, onChange, defaultValue }: FileUploaderProps) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     onChange(acceptedFiles);
   }, []);

@@ -4,6 +4,7 @@ import Image from "next/image";
 import ReactDatePicker from "react-datepicker";
 import { Control } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 import { Checkbox } from "./ui/checkbox";
 import {
@@ -86,10 +87,10 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             placeholder={props.placeholder}
             disabled={props.disabled}
             international
-            withCountryCallingCode
+            withCountryCallingCode 
             value={field.value as E164Number | undefined}
             onChange={field.onChange}
-            className="input-phone"
+            className="mt-2 h-11 rounded-md px-3 text-sm border bg-dark-400 placeholder:text-dark-600 border-dark-500 !important"
           />
         </FormControl>
       );

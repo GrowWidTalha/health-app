@@ -1,20 +1,17 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { InputFile } from "node-appwrite";
 
+import { RegisterUserParams } from "@/types";
 import {
-  BUCKET_ID,
   DATABASE_ID,
-  ENDPOINT,
   PATIENT_COLLECTION_ID,
-  NEXT_PUBLIC_PROJECT_ID,
   databases,
-  storage,
-  users,
+  users
 } from "../lib/appwrite.config";
 import { parseStringify } from "../lib/utils";
-import {account} from "../hooks/auth.lib";
+import { updateLabel } from "./auth.actions";
+import { uploadFile } from "./storage.actions";
 
 
 // GET USER
@@ -38,28 +35,18 @@ export const registerPatient = async ({
 }: RegisterUserParams) => {
   try {
     // Upload file ->  // https://appwrite.io/docs/references/cloud/client-web/storage#createFile
-    let file;
-    if (identificationDocument) {
-      const inputFile =
-        identificationDocument &&
-        InputFile.fromBlob(
-          identificationDocument?.get("blobFile") as Blob,
-          identificationDocument?.get("fileName") as string
-        );
-
-      file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile);
-    }
+    let file = await uploadFile(identificationDocument)
 
     // Create new patient document -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#createDocument
+    const updatedData = await updateLabel(patient.userId, "patient");
+    // const updateNumber = await users.updatePhone(patient.userId, "+" + patient.phone)
     const newPatient = await databases.createDocument(
       DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
       ID.unique(),
       {
-        identificationDocumentId: file?.$id ? file.$id : null,
-        identificationDocumentURL: file?.$id
-          ? `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file.$id}/view??project=${NEXT_PUBLIC_PROJECT_ID}`
-          : null,
+        identificationDocumentId: file?.fileId? file.fileId : null,
+        identificationDocumentURL: file?.url,
         ...patient,
       }
     );

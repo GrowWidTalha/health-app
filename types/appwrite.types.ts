@@ -1,4 +1,5 @@
 import { Models } from "node-appwrite";
+import { Gender, Status } from ".";
 
 export interface Patient extends Models.Document {
   userId: string;
@@ -11,7 +12,6 @@ export interface Patient extends Models.Document {
   occupation: string;
   emergencyContactName: string;
   emergencyContactNumber: string;
-  primaryPhysician: string;
   insuranceProvider: string;
   insurancePolicyNumber: string;
   allergies: string | undefined;
@@ -29,9 +29,29 @@ export interface Appointment extends Models.Document {
   patient: Patient;
   schedule: Date;
   status: Status;
-  primaryPhysician: string;
   reason: string;
   note: string;
   userId: string;
   cancellationReason: string | null;
+  doctor: Doctor;
+  type: "online" | "offline"
 }
+export interface Doctor extends Models.Document {
+  name: string;
+  email: string;
+  doctor_user_id: string;
+  areaOfExpertise: string;
+  avatar: string;
+  phone: string;
+}
+export interface Request extends Models.Document {
+  usertype: RequestUserType;
+  requestedBy: string;
+  reason: string;
+  appointment: Appointment;
+  status:RequestStatusType;
+  username: string;
+}
+
+export type RequestUserType = "patient" | "doctor"
+export type RequestStatusType = "rejected" |"approved" | "pending";

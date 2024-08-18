@@ -4,6 +4,9 @@ import { AppointmentForm } from "@/components/forms/AppointmentForm";
 import { getPatient } from "@/actions/patient.actions";
 import * as Sentry from "@sentry/nextjs";
 import { account, users } from "@/lib/appwrite.config";
+import UnauthorizedAccess from "@/components/UnAuthorizedAccess";
+import { SearchParamProps } from "@/types";
+import NotRegisteredModal from "@/components/modals/NotRegisteredModal";
 
 const Appointment = async ({ params: { userId } }: SearchParamProps) => {
   const patient = await getPatient(userId);
@@ -13,6 +16,8 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
 
   return (
     <div className="flex h-screen max-h-screen">
+      <NotRegisteredModal userId={userId} patient={patient} />
+      <UnauthorizedAccess requiredRole={"patient"}  />
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container max-w-[860px] flex-1 justify-between">
           <Image

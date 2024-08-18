@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SelectItem } from "@/components/ui/select";
 import {
-  Doctors,
   GenderOptions,
   IdentificationTypes,
   PatientFormDefaultValues,
@@ -25,8 +24,11 @@ import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import { FileUploader } from "../FileUploader";
 import SubmitButton from "../SubmitButton";
-import { Patient } from "@/types/appwrite.types";
+import { Doctor, Patient } from "@/types/appwrite.types";
 import Link from "next/link";
+import { getAllDoctors } from "@/actions/doctors.actions";
+import { User } from "@/types";
+import { Button } from "../ui/button";
 
 const RegisterForm = ({
   user,
@@ -39,6 +41,7 @@ const RegisterForm = ({
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  
 
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
@@ -48,6 +51,7 @@ const RegisterForm = ({
   });
 
   const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
+    console.log("in the onsubmit")
     if (!user) return;
     setIsLoading(true);
 
@@ -78,7 +82,6 @@ const RegisterForm = ({
         occupation: values.occupation,
         emergencyContactName: values.emergencyContactName,
         emergencyContactNumber: values.emergencyContactNumber,
-        primaryPhysician: values.primaryPhysician,
         insuranceProvider: values.insuranceProvider,
         insurancePolicyNumber: values.insurancePolicyNumber,
         allergies: values.allergies,
@@ -92,7 +95,7 @@ const RegisterForm = ({
           : undefined,
         privacyConsent: values.privacyConsent,
       };
-
+      console.log(patient)
       const newPatient = await registerPatient(patient);
 
       if (newPatient) {
@@ -245,15 +248,15 @@ const RegisterForm = ({
           </div>
 
           {/* PRIMARY CARE PHYSICIAN */}
-          <CustomFormField
+          {/* <CustomFormField
             fieldType={FormFieldType.SELECT}
             control={form.control}
-            name="primaryPhysician"
+            name="doctor"
             label="Primary care physician"
             placeholder="Select a physician"
             disabled={isReadOnly}
           >
-            {Doctors.map((doctor, i) => (
+            {doctors && doctors.map((doctor, i) => (
               <SelectItem
                 key={doctor.name + i}
                 value={doctor.name}
@@ -261,7 +264,7 @@ const RegisterForm = ({
               >
                 <div className="flex cursor-pointer items-center gap-2">
                   <Image
-                    src={doctor.image}
+                    src={doctor.avatar}
                     width={32}
                     height={32}
                     alt="doctor"
@@ -271,7 +274,7 @@ const RegisterForm = ({
                 </div>
               </SelectItem>
             ))}
-          </CustomFormField>
+          </CustomFormField> */}
 
           {/* INSURANCE & POLICY NUMBER */}
           <div className="flex flex-col gap-6 xl:flex-row">
@@ -420,7 +423,6 @@ const RegisterForm = ({
             />
           </section>
         )}
-
         {!isReadOnly && (
           <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
         )}

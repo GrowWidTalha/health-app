@@ -1,38 +1,9 @@
 "use server";
 
 import { account, users } from "@/lib/appwrite.config";
+import { parseStringify } from "@/lib/utils";
+import { Query } from "appwrite";
 
-
-/**
- * @description Get Current user in server side
- * @returns returns current user in server
- */
-export const getCurrentUser = async () => {
-  try {
-    const user = await account.get();
-
-    return user;
-  } catch (error) {
-    console.log("error while getting current user: ", error);
-  }
-};
-
-/**
- * @description Get isLoggedIn state in server side
- * @returns returns isLoggedIn state in server
- */
-export const isLoggedIn = async () => {
-  try {
-    const user = await account.get();
-    if (user.$id) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.log("error while getting current user: ", error);
-  }
-};
 
 
 /**
@@ -41,10 +12,25 @@ export const isLoggedIn = async () => {
  */
 export const updateLabel = async (userId: string, label: string) => {
   try {
-    const user = await users.updateLabels(userId, [label])
+    const user = await users.updateLabels(userId, [label]);
 
-    return user
+    return parseStringify(user);
   } catch (error) {
-    console.log("Error updating label: ", error)
+    console.log("Error updating label: ", error);
+  }
+};
+
+export const getAllUsers = async () => {
+  try {
+    const allUsers = await users.list([ Query.orderDesc("$createdAt"), Query.contains("labels", ["patient"])])
+    
+    const data = {
+      totalCount: allUsers.total,
+      usersList: allUsers.users
+    }
+
+    return parseStringify(data)
+  } catch (error) {
+    console.log("Error getting all users: ", error)
   }
 }

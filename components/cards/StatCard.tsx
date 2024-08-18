@@ -1,9 +1,10 @@
 import clsx from "clsx";
+import { CalendarCheck, CalendarCheck2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
 interface StatCardProps {
-  type: "appointments" | "pending" | "cancelled";
+  type: "appointments" | "pending" | "cancelled" | "total";
   count: number;
   label: string;
   icon: string;
@@ -16,16 +17,23 @@ const StatCard = ({ count, icon, label, type }: StatCardProps) => {
         "bg-appointments": type === "appointments",
         "bg-cancelled": type === "cancelled",
         "bg-pending": type === "pending",
+        "bg-gray-800": type === "total",
+        // "bg-green-500": type === "total",
       })}
     >
       <div className="flex items-center gap-4">
-        <Image
-          className="size-8 w-fit"
-          src={icon}
-          alt={label}
-          height={32}
-          width={32}
-        />
+        {type === "total" ? (
+          <CalendarCheck className="w-fit size-8 text-green-500"  />
+        ) : (
+          <Image
+            className={`size-8  w-fit `}
+            src={icon}
+            alt={label}
+            height={32}
+            width={32}
+          />
+          
+         )}
         <p className="text-white text-32-bold ">{count}</p>
       </div>
 

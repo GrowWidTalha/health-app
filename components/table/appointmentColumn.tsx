@@ -1,23 +1,13 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { MoreHorizontal } from "lucide-react";
-import { Appointment } from "@/types/appwrite.types";
-import StatusBadge from "../StatusBadge";
 import { formatDateTime } from "@/lib/utils";
-import { Doctors } from "@/constants";
+import { Appointment } from "@/types/appwrite.types";
+import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import AppointmentModal from "../AppointmentModal";
 import Link from "next/link";
+import AppointmentModal from "../modals/AppointmentModal";
+import StatusBadge from "../StatusBadge";
+import { Badge } from "../ui/badge";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -34,7 +24,7 @@ export const columns: ColumnDef<Appointment>[] = [
       const appointment = row.original;
 
       return (
-        <Link href={`/patients/${appointment.userId}`} >
+        <Link href={`/patients/${appointment.userId}?type=admin`} >
           <p className="text-14-medium underline">{appointment?.patient?.name}</p>
         </Link>
       );
@@ -63,17 +53,14 @@ export const columns: ColumnDef<Appointment>[] = [
     },
   },
   {
-    accessorKey: "primaryPhysician",
+    accessorKey: "doctor",
     header: () => "Doctor",
     cell: ({ row }) => {
-      const doctor = Doctors.find(
-        (doc) => doc.name === row.original.primaryPhysician
-      );
-
+      const doctor = row.original.doctor
       return (
         <div className="flex items-center gap-3">
           <Image
-            src={doctor?.image!}
+            src={doctor?.avatar!}
             alt="doctor"
             width={100}
             height={100}
@@ -84,6 +71,16 @@ export const columns: ColumnDef<Appointment>[] = [
       );
     },
   },
+    {
+        accessorKey: "type",
+        header: () => "Location",
+        cell: ({ row }) => {
+        const type = row.original.type
+        return (
+            <Badge variant={"outline"}>{type}</Badge>
+        );
+        },
+    },
   {
     id: "actions",
     header: () => <div className="pl-4">Actions</div>,

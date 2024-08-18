@@ -7,6 +7,9 @@ import { getAppointment } from "@/actions/appointment.actions";
 import { formatDateTime } from "@/lib/utils";
 import * as Sentry from "@sentry/nextjs";
 import { getUser } from "@/actions/patient.actions";
+import { SearchParamProps } from "@/types";
+import { google } from "calendar-link";
+import CopyInput from "@/components/copyInput";
 
 const RequestSuccess = async ({
   searchParams,
@@ -18,11 +21,26 @@ const RequestSuccess = async ({
 
   Sentry.metrics.set("user_view_appointment-success", user?.name!);
 
+  const doctor = appointment?.doctor;
+  if(!doctor) return null;
 
-  const doctor = Doctors.find(
-    (doctor) => doctor.name === appointment.primaryPhysician
-  );
-
+  const event = {
+    title: `ppointment with 1 ${doctor.name}`,
+    description: `Reason: ${appointment.reason}`,
+    start: formatDateTime(appointment.schedule).dateTime,
+    duration: [1, "hour"],
+    guests: [doctor.email]
+  };
+  
+  const eventLink = google({
+    title: `Appointment with ${doctor.name}`,
+    description: `Reason: ${appointment.reason}`,
+    start: formatDateTime(appointment.schedule).dateTime,
+    duration: [1, "hour"],
+    guests: [doctor.email]
+  })
+  console.log(eventLink);
+  
   return (
     <div className=" flex h-screen max-h-screen px-[5%]">
       <div className="success-img">
@@ -49,12 +67,17 @@ const RequestSuccess = async ({
           </h2>
           <p>We&apos;ll be in touch shortly to confirm.</p>
         </section>
-
+        <section className="flex gap-2 items-center justify-between">
+          <p className="whitespace-nowrap ">
+            Add to Calendar:
+          </p>
+        <CopyInput text={eventLink} />
+        </section>
         <section className="request-details">
           <p>Requested appointment details: </p>
           <div className="flex items-center gap-3">
             <Image
-              src={doctor?.image!}
+              src={doctor?.avatar!}
               alt="doctor"
               width={100}
               height={100}
@@ -73,12 +96,20 @@ const RequestSuccess = async ({
           </div>
         </section>
 
-        <Button variant="outline" className="shad-primary-btn" asChild>
-          <Link href={`/patients/${userId}/new-appointment`}>
-            New Appointment
-          </Link>
-        </Button>
-
+        <div className="flex gap-4">
+          <Button variant="outline" className="shad-primary-btn" asChild>
+            <Link href={`/patients/${userId}/new-appointment`}>
+              New Appointment
+            </Link>
+          </Button>
+          <Button
+            variant={"ghost"}
+            className="hover:bg-accent hover:text-accent-foreground"
+            asChild
+          >
+            <Link href={`/patients/${userId}/dashboard`}>Go to dashboard</Link>
+          </Button>
+        </div>
         <p className="copyright">© 2024 CarePluse</p>
       </div>
     </div>

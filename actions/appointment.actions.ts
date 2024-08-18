@@ -1,6 +1,7 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
+import { format, isToday } from "date-fns"; // Make sure to install date-fns for date manipulation
 
 import { Appointment } from "@/types/appwrite.types";
 
@@ -12,6 +13,7 @@ import {
 } from "../lib/appwrite.config";
 import { formatDateTime, parseStringify } from "../lib/utils";
 import { revalidatePath } from "next/cache";
+import { CreateAppointmentParams, Status, UpdateAppointmentParams } from "@/types";
 
 //  CREATE APPOINTMENT
 export const createAppointment = async (
@@ -22,7 +24,17 @@ export const createAppointment = async (
       DATABASE_ID!,
       APPOINTMENT_COLLECTION_ID!,
       ID.unique(),
-      appointment
+      {
+        doctor: appointment ? appointment?.doctor?.$id : "",
+        schedule: appointment.schedule,
+        userId: appointment.userId,
+        note: appointment.note,
+        patient: appointment.patient,
+        status: appointment.status,
+        reason: appointment.reason,
+        doctorId: appointment ? appointment.doctor?.$id : "",
+        type: appointment.appointmentType,
+      }
     );
 
     return parseStringify(newAppointment);
@@ -90,29 +102,33 @@ export const updateAppointment = async ({
   type,
   userId,
 }: UpdateAppointmentParams) => {
+  console.log("appointment: ", appointment);
   try {
+    // Update appointment to scheduled -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#updateDocument
     const updateAppointment = await databases.updateDocument(
       DATABASE_ID!,
       APPOINTMENT_COLLECTION_ID!,
       appointmentId,
-      appointment
-    );
+      appointment,
+    )
 
+    if (!updateAppointment) throw Error;
     // TODO: add SMS alert
 
-    const smsMessage = `
+//     const smsMessage = `
 
-Hi, it's carepulse,
-${
-  type === "schedule"
-    ? `Your appointment has been scheduled for ${formatDateTime(
-        appointment.schedule
-      ).dateTime} with DR. ${appointment.primaryPhysician}`
-    : `We regret to inform you that your appointment has been cancelled for the following reason.
-  Reason: ${appointment.cancellationReason}`
-}`;
-    await sendSmsNotification(userId, smsMessage);
+// Hi, it's carepulse,
+// ${
+//   type === "schedule"
+//     ? `Your appointment has been scheduled for ${
+//         formatDateTime(appointment.schedule).dateTime
+//       } with DR. ${appointment.doctor.name}`
+//     : `We regret to inform you that your appointment has been cancelled for the following reason.
+//   Reason: ${appointment.cancellationReason}`
+// }`;
+//     await sendSmsNotification(userId, smsMessage);
     revalidatePath("/admin");
+    revalidatePath("/patients/[userId]/dashboard");
     return parseStringify(updateAppointment);
   } catch (error) {
     console.log("Error while updating the appointment", error);
@@ -133,3 +149,93 @@ export const sendSmsNotification = async (userId: string, content: string) => {
     console.log("error while sending message: ", error);
   }
 };
+
+export const getAppointmentsByUserId = async (userId: string) => {
+  try {
+    const appointments = await databases.listDocuments(
+      DATABASE_ID!,
+      APPOINTMENT_COLLECTION_ID!,
+      [Query.equal("userId", [userId]), Query.orderDesc("$createdAt")]
+    );
+
+    return parseStringify(appointments.documents);
+  } catch (error) {}
+};
+
+export const getRecentAppointmentsListForDoctors = async (doctorId: string) => {
+  // Fetch the appointments list for the doctor, ordered by creation date
+  // if (!doctorId || typeof doctorId !== 'string') {
+  //   throw new Error('Invalid doctorId provided.');
+  // }
+  const appointments = await databases.listDocuments(
+    DATABASE_ID!,
+    APPOINTMENT_COLLECTION_ID!,
+    [
+      Query.equal("doctorId", [doctorId!]), // Ensure the doctorId is passed as an array
+      Query.orderDesc("$createdAt"),
+    ]
+  );
+
+  // Initialize counts for different types of appointments
+  const initialCount = {
+    todayScheduledCount: 0, // Count for today's scheduled appointments
+    requestedCount: 0, // Count for requested appointments
+    recentScheduledCount: 0, // Count for all recent scheduled appointments
+    totalCount: 0, // Total count of appointments
+  };
+
+  // Reduce function to calculate counts based on appointment status and date
+  const counts = (appointments.documents as Appointment[]).reduce(
+    (acc, appointment) => {
+      const appointmentDate = new Date(appointment.schedule); // Parse the appointment date
+
+      // Check if the appointment is scheduled for today
+      if (appointment.status === "scheduled") {
+        acc.recentScheduledCount++; // Increment for any scheduled appointment
+
+        if (isToday(appointmentDate)) {
+          acc.todayScheduledCount++; // Increment if the appointment is scheduled for today
+        }
+      }
+
+      // Count requested appointments
+      if (appointment.status === "pending") {
+        acc.requestedCount++;
+      }
+
+      acc.totalCount++; // Increment the total count
+      return acc;
+    },
+    initialCount
+  );
+
+  // Prepare the data object to be returned
+  const data = {
+    totalCount: counts.totalCount, // Total number of appointments
+    todayScheduledCount: counts.todayScheduledCount, // Today's scheduled appointments
+    requestedCount: counts.requestedCount, // Requested appointments count
+    recentScheduledCount: counts.recentScheduledCount, // Recent scheduled appointments
+    documents: appointments.documents, // List of appointment documents
+  };
+
+  return parseStringify(data); // Return the processed data
+};
+
+export const updateStatus = async (status: Status, appointmentId: string) => {
+  try {
+    const document = await databases.updateDocument(
+      DATABASE_ID!,
+      APPOINTMENT_COLLECTION_ID!,
+      appointmentId,
+      {
+        status: status
+      }
+    )
+
+    revalidatePath("/doctor")
+
+    return parseStringify(document)
+  } catch (error) {
+
+  }
+}

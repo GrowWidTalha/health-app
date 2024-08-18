@@ -1,27 +1,30 @@
 import RegisterForm from "@/components/forms/RegisterForm";
 import NavBar from "@/components/NavBar";
 import { getPatient } from "@/actions/patient.actions";
-import React from "react";
+import { useEffect, useState } from "react";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { redirect } from "next/navigation";
-import { getCurrentUser, isLoggedIn } from "@/actions/auth.actions";
+import { Patient } from "@/types/appwrite.types";
+import UnauthorizedAccess from "@/components/UnAuthorizedAccess";
+import { Roles, SearchParamProps } from "@/types";
 
-const PatientDetailsPage = async ({ params: { userId } }: SearchParamProps) => {
-  const patient = await getPatient(userId);
-  const isLogIn = await isLoggedIn();
-  const user = await getCurrentUser();
-  
-  if (user) {
-    if (!(isLogIn && (user.$id === userId || user.labels[0] === "admin"))) {
-      redirect("/");
-    }
-  }
+// Define the type for props
+
+// Server component to render patient details
+const PatientDetailsPage = async ({ params: { userId }, searchParams }: SearchParamProps) => {
+  const {type} = searchParams
+  const patient = await getPatient(userId)
   return (
     <div className="flex flex-col mx-auto max-w-7xl space-y-14">
+      <UnauthorizedAccess requiredRole={type as Roles}  />
       <NavBar text="Patient Details" />
-      <div className="flex w-full justify-center ">
+      <div className="flex w-full justify-center">
         <div className="max-w-2xl w-full">
-          <RegisterForm patient={patient} isReadOnly />
+          {patient ? (
+            <RegisterForm patient={patient} isReadOnly />
+          ) : (
+            <div>Loading...</div>
+          )}
+          {/* Pass 'type' as a prop */}
         </div>
       </div>
     </div>

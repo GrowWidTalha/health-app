@@ -1,3 +1,4 @@
+import { Appointment } from "@/types/appwrite.types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -74,4 +75,48 @@ export function encryptKey(passkey: string) {
 
 export function decryptKey(passkey: string) {
   return atob(passkey);
+}
+
+
+interface AppointmentCategories {
+  recentAppointments: Appointment[];
+  todayAppointments: Appointment[];
+  upcomingAppointments: Appointment[];
+}
+
+export function filterAppointments(appointments: Appointment[]): AppointmentCategories {
+  const now = new Date();
+
+  const recentAppointments = appointments.filter(appointment => {
+    const appointmentDate = new Date(appointment.schedule);
+
+    return (
+      appointmentDate < now && 
+      appointmentDate.toDateString() !== now.toDateString()
+    );
+  });
+
+  const todayAppointments = appointments.filter(appointment => {
+    const appointmentDate = new Date(appointment.schedule);
+
+    return (
+      appointmentDate.toDateString() === now.toDateString() &&
+      appointment.status === "scheduled"
+    );
+  });
+
+  const upcomingAppointments = appointments.filter(appointment => {
+    const appointmentDate = new Date(appointment.schedule);
+
+    return (
+      appointmentDate > now && 
+      appointment.status === "scheduled"
+    );
+  });
+
+  return {
+    recentAppointments,
+    todayAppointments,
+    upcomingAppointments,
+  };
 }

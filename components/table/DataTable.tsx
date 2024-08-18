@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
+import DoctorDialog from "../DoctorDialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

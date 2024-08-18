@@ -3,24 +3,27 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { SelectItem } from "@/components/ui/select";
-import { Doctors } from "@/constants";
 import {
   createAppointment,
   updateAppointment,
 } from "@/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
-import { Appointment } from "@/types/appwrite.types";
+import { Appointment, Doctor } from "@/types/appwrite.types";
 
 import "react-datepicker/dist/react-datepicker.css";
 
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
-import { Form } from "../ui/form";
+import { Form, FormControl } from "../ui/form";
+import { getAllDoctors } from "@/actions/doctors.actions";
+import { Status } from "@/types";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
 export const AppointmentForm = ({
   userId,
@@ -37,17 +40,30 @@ export const AppointmentForm = ({
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [doctors, setDoctors] = useState<Doctor[]>();
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      const docs = await getAllDoctors();
+
+      if (docs) {
+        setDoctors(docs);
+      }
+    };
+    fetchDoctors();
+  }, []);
 
   const AppointmentFormValidation = getAppointmentSchema(type);
 
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: appointment ? appointment.primaryPhysician : "",
-      schedule: (appointment && appointment.schedule) || new Date(),
+      doctor: appointment ? appointment.doctor.$id : "",
+      schedule: (appointment && new Date(appointment.schedule)) || new Date(),
       reason: appointment ? appointment.reason : "",
       note: appointment ? appointment.note : "",
       cancellationReason: (appointment && appointment.cancellationReason) || "",
+      appointmentType: "offline"
     },
   });
 
@@ -55,7 +71,7 @@ export const AppointmentForm = ({
     values: z.infer<typeof AppointmentFormValidation>
   ) => {
     setIsLoading(true);
-
+    const doctor = doctors?.find((doc) => doc.$id === values.doctor);
     let status;
     switch (type) {
       case "schedule":
@@ -73,11 +89,13 @@ export const AppointmentForm = ({
         const appointment = {
           userId,
           patient: patientId,
-          primaryPhysician: values.primaryPhysician,
+          doctor: doctor,
           schedule: new Date(values.schedule),
           reason: values.reason!,
           status: status as Status,
           note: values.note,
+          doctorid: doctor?.$id!,
+          appointmentType: values.appointmentType!,
         };
 
         const newAppointment = await createAppointment(appointment);
@@ -93,10 +111,15 @@ export const AppointmentForm = ({
           userId,
           appointmentId: appointment?.$id!,
           appointment: {
-            primaryPhysician: values.primaryPhysician,
+            patient: appointment?.patient!,
             schedule: new Date(values.schedule),
             status: status as Status,
+            reason: values.reason,
+            note: values.note,
+            userId: userId,
             cancellationReason: values.cancellationReason,
+            doctor: doctor,
+            doctorId: doctor?.$id
           },
           type,
         };
@@ -143,24 +166,25 @@ export const AppointmentForm = ({
             <CustomFormField
               fieldType={FormFieldType.SELECT}
               control={form.control}
-              name="primaryPhysician"
+              name="doctor"
               label="Doctor"
               placeholder="Select a doctor"
             >
-              {Doctors.map((doctor, i) => (
-                <SelectItem key={doctor.name + i} value={doctor.name}>
-                  <div className="flex cursor-pointer items-center gap-2">
-                    <Image
-                      src={doctor.image}
-                      width={32}
-                      height={32}
-                      alt="doctor"
-                      className="rounded-full border border-dark-500"
-                    />
-                    <p>{doctor.name}</p>
-                  </div>
-                </SelectItem>
-              ))}
+              {doctors &&
+                doctors.map((doctor, i) => (
+                  <SelectItem key={doctor.name + i} value={doctor?.$id}>
+                    <div className="flex cursor-pointer items-center gap-2">
+                      <Image
+                        src={doctor?.avatar!}
+                        width={32}
+                        height={32}
+                        alt="doctor"
+                        className="rounded-full border border-dark-500"
+                      />
+                      <p>{doctor?.name}</p>
+                    </div>
+                  </SelectItem>
+                ))}
             </CustomFormField>
 
             <CustomFormField
@@ -171,7 +195,31 @@ export const AppointmentForm = ({
               showTimeSelect
               dateFormat="MM/dd/yyyy  -  h:mm aa"
             />
-
+            <CustomFormField
+              fieldType={FormFieldType.SKELETON}
+              control={form.control}
+              name="appointmentType"
+              label="Appointment Type"
+              renderSkeleton={(field) => (
+                <FormControl>
+                  <RadioGroup
+                    className="flex h-11 gap-6 xl:justify-between"
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    // disabled={isReadOnly}
+                  >
+                    {["online", 'offline'].map((option, i) => (
+                      <div key={option + i} className="radio-group">
+                        <RadioGroupItem value={option} id={option} />
+                        <Label htmlFor={option} className="cursor-pointer">
+                          {option}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              )}
+            />
             <div
               className={`flex flex-col gap-6  ${
                 type === "create" && "xl:flex-row"

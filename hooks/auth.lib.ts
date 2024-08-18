@@ -1,4 +1,5 @@
 import { updateLabel } from "@/actions/auth.actions";
+import { users } from "@/lib/appwrite.config";
 import { Account, Client, ID } from "appwrite";
 
 const client = new Client();
@@ -36,16 +37,15 @@ export class AppwriteService {
         name
       );
       if (userAccount) {
-        const updatedData = await updateLabel(userAccount.$id, "patient");
-
-        return this.login({ email, password });
-      } else {
-        return this.login({ email, password });
-        return userAccount;
+        await updateLabel(userAccount.$id, "patient")
+       await this.login({ email, password });
+       return await  this.getCurrentUser()
       }
     } catch (error: any) {
       if (error.type === "user_already_exists") {
-        return this.login({ email, password });
+        
+        await this.login({ email, password });
+        return await this.getCurrentUser()
       } else {
         throw error;
       }
