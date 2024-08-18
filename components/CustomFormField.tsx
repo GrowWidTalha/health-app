@@ -125,7 +125,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               disabled={props.disabled}
               showTimeSelect={props.showTimeSelect ?? false}
               selected={field.value}
-              // @ts-ignore
+              // @ts-ignore 
               onChange={(date: Date) => field.onChange(date)}
               timeInputLabel="Time:"
               dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
