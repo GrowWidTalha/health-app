@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PatientForm } from "@/components/forms/PatientForm";
 import PasskeyModal  from "@/components/PassKeyModal";
+import { SearchParamProps } from "@/types";
 
 const Home = ({ searchParams }: SearchParamProps) => {
   const isAdmin = searchParams?.admin === "true";
