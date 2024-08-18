@@ -51,13 +51,14 @@ interface PaymentCompleteModalProps {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
             <AlertDialogDescription>
-              You've chosed online appointment. In online appointment you have to pay the appointment fees first.
+              You&apos;ve chosed online appointment. In online appointment you have to pay the appointment fees first.
               Click continue to pay using stripe.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button onClick={onCheckOut}>Continue</Button>
+            <Button
+             onClick={onCheckOut}>Continue</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
