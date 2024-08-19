@@ -1,10 +1,10 @@
-import stripe from 'stripe'
+import {Stripe} from 'stripe'
 import { NextResponse } from 'next/server'
 import {  updatePaymentStatus } from '@/actions/appointment.actions'
 
 export async function POST(request: Request) {
   const body = await request.text()
-
+    const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
   const sig = request.headers.get('stripe-signature') as string
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
