@@ -1,6 +1,6 @@
 import stripe from 'stripe'
 import { NextResponse } from 'next/server'
-import { updateAppointment, updatePaymentStatus } from '@/actions/appointment.actions'
+import {  updatePaymentStatus } from '@/actions/appointment.actions'
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -21,10 +21,10 @@ export async function POST(request: Request) {
 
   // CREATE
   if (eventType === 'checkout.session.completed') {
-    const { id, amount_total, metadata } = event.data.object
+    const { metadata } = event.data.object
 
    const appointment = await updatePaymentStatus(metadata?.appointmentId!)
-
+    console.log(appointment)
     // const newOrder = await createOrder(order)
     return NextResponse.json({ message: 'OK', appointment: appointment })
   }

@@ -249,9 +249,6 @@ export const updatePaymentStatus = async (appointmentId: string) => {
         isPaid: true
       }
     )
-
-    revalidatePath("/doctor")
-
     return parseStringify(document)
   } catch (error) {
 
