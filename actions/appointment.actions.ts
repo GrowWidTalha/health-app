@@ -239,3 +239,21 @@ export const updateStatus = async (status: Status, appointmentId: string) => {
 
   }
 }
+export const updatePaymentStatus = async (appointmentId: string) => {
+  try {
+    const document = await databases.updateDocument(
+      DATABASE_ID!,
+      APPOINTMENT_COLLECTION_ID!,
+      appointmentId,
+      {
+        isPaid: true
+      }
+    )
+
+    revalidatePath("/doctor")
+
+    return parseStringify(document)
+  } catch (error) {
+
+  }
+}
