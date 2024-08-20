@@ -34,6 +34,8 @@ export interface Appointment extends Models.Document {
   userId: string;
   cancellationReason: string | null;
   doctor: Doctor;
+  isPaid: boolean;
+  presprictionLink: string;
   type: "online" | "offline"
 }
 export interface Doctor extends Models.Document {

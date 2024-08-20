@@ -39,7 +39,6 @@ interface PaymentCompleteModalProps {
         }
       }, []);
       const onCheckOut = async () => {
-        console.log("in check out")
         const url = await checkoutOnlineAppointment(appointment, 1000)
         if(url){
             router.push(url)

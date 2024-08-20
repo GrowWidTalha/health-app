@@ -9,6 +9,7 @@ import { formatDateTime } from "@/lib/utils";
 import RequestRescheduleModal from "../modals/requestRescheduleModal";
 import AppointmentCompletedModal from "../modals/appointmentCompletedModal";
 import { Badge } from "../ui/badge";
+import Link from "next/link";
 export const DoctorAppointmentColumn: ColumnDef<Appointment>[] = [
   {
     header: "ID",
@@ -84,6 +85,11 @@ export const DoctorAppointmentColumn: ColumnDef<Appointment>[] = [
         <div className="flex items-center gap-2">
           <AppointmentCompletedModal appointmentId={row.original.$id}/>
           <RequestRescheduleModal appointmentId={row.original.$id} usertype="doctor" />
+          <Link href={`/doctor/${row.original.doctor.$id}/${row.original.$id}/details`}>
+            <Button variant={"ghost"}>
+                View
+            </Button>
+          </Link>
         </div>
       );
     },

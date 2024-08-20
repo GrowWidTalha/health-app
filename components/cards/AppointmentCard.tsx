@@ -1,35 +1,27 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/DCwlXVyAi3f
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import { Card, CardContent } from "../ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { CalendarIcon, ClockIcon } from "lucide-react"
+import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { CalendarIcon, ClockIcon } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
-import { Doctors } from "@/constants";
-import clsx from "clsx";
 import { Doctor } from "@/types/appwrite.types";
-import { Status } from "@/types";
 import StatusBadge from "../StatusBadge";
-import RequestRescheduleModal from "../modals/requestRescheduleModal";
-import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { Status } from "@/types";
+
 interface AppointmentCardProps {
   status: Status;
   schedule: string | Date;
-  reason: string;
+  doctor: Doctor;
   appointmentId: string;
-  doctor: Doctor,
-  location: "online" | "offline"
+  location: "online" | "offline";
 }
-export default function AppointmentCard({ doctor, status, schedule, reason,appointmentId, location} : AppointmentCardProps) {
 
-
+export default function AppointmentCard({ doctor, status, schedule, appointmentId, location }: AppointmentCardProps) {
   return (
-    <div className="w-full max-w-md border-none rounded-none " >
-      <div className="grid gap-4 p-6 bg-appointments bg-cover stat-card  rounded-md">
+    <div className="w-full max-w-md">
+      <div className="grid gap-4 p-4 bg-appointments bg-cover rounded-md">
         <div className="flex items-center justify-between">
-         <StatusBadge status={status}/>
+          <StatusBadge status={status} />
           <div className="text-muted-foreground text-sm">
             <CalendarIcon className="mr-1 inline-block h-4 w-4" />
             {formatDateTime(schedule).dateOnly}
@@ -38,7 +30,7 @@ export default function AppointmentCard({ doctor, status, schedule, reason,appoi
         <div className="flex items-center gap-4">
           <Avatar className="h-12 w-12 border">
             <AvatarImage src={doctor?.avatar} />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>DR</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="font-medium">DR. {doctor?.name}</div>
@@ -48,17 +40,15 @@ export default function AppointmentCard({ doctor, status, schedule, reason,appoi
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="font-medium">Reason</div>
-            <div className="text-muted-foreground text-sm">{reason}</div>
-            <Badge variant={"outline"}>{location}</Badge>
-          </div>
-          {status !== "completed"  && (
-            <RequestRescheduleModal appointmentId={appointmentId} usertype="patient"/>
-          )}
+        <div className="flex justify-between items-center">
+          <div className="text-sm text-muted-foreground">{location}</div>
+          <Link href={`/appointments/${appointmentId}`}>
+            <Button variant="outline" size="sm">
+              View Details
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

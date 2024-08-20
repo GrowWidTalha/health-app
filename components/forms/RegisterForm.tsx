@@ -41,7 +41,7 @@ const RegisterForm = ({
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  
+
 
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
@@ -51,7 +51,6 @@ const RegisterForm = ({
   });
 
   const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
-    console.log("in the onsubmit")
     if (!user) return;
     setIsLoading(true);
 
@@ -95,7 +94,6 @@ const RegisterForm = ({
           : undefined,
         privacyConsent: values.privacyConsent,
       };
-      console.log(patient)
       const newPatient = await registerPatient(patient);
 
       if (newPatient) {
@@ -369,7 +367,7 @@ const RegisterForm = ({
             disabled={isReadOnly}
           />
           {isReadOnly && patient ? (
-            <Link href={patient.identificationDocumentURL}  target="_blank"> 
+            <Link href={patient.identificationDocumentURL}  target="_blank">
             <Image
               src={patient.identificationDocumentURL!}
               alt={"data"}

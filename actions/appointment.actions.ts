@@ -102,7 +102,6 @@ export const updateAppointment = async ({
   type,
   userId,
 }: UpdateAppointmentParams) => {
-  console.log("appointment: ", appointment);
   try {
     // Update appointment to scheduled -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#updateDocument
     const updateAppointment = await databases.updateDocument(
@@ -247,6 +246,21 @@ export const updatePaymentStatus = async (appointmentId: string) => {
       appointmentId,
       {
         isPaid: true
+      }
+    )
+    return parseStringify(document)
+  } catch (error) {
+
+  }
+}
+export const addPresprictionUrlToDb = async (appointmentId: string, link: string) => {
+  try {
+    const document = await databases.updateDocument(
+      DATABASE_ID!,
+      APPOINTMENT_COLLECTION_ID!,
+      appointmentId,
+      {
+        presprictionLink: link
       }
     )
     return parseStringify(document)

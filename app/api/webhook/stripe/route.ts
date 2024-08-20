@@ -24,7 +24,6 @@ export async function POST(request: Request) {
     const { metadata } = event.data.object
 
    const appointment = await updatePaymentStatus(metadata?.appointmentId!)
-    console.log(appointment)
     // const newOrder = await createOrder(order)
     return NextResponse.json({ message: 'OK', appointment: appointment })
   }

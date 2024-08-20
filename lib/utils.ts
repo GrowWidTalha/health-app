@@ -91,7 +91,7 @@ export function filterAppointments(appointments: Appointment[]): AppointmentCate
     const appointmentDate = new Date(appointment.schedule);
 
     return (
-      appointmentDate < now && 
+      appointmentDate < now &&
       appointmentDate.toDateString() !== now.toDateString()
     );
   });
@@ -109,7 +109,7 @@ export function filterAppointments(appointments: Appointment[]): AppointmentCate
     const appointmentDate = new Date(appointment.schedule);
 
     return (
-      appointmentDate > now && 
+      appointmentDate > now &&
       appointment.status === "scheduled"
     );
   });
@@ -120,3 +120,23 @@ export function filterAppointments(appointments: Appointment[]): AppointmentCate
     upcomingAppointments,
   };
 }
+
+/**
+ * Calculates age based on the date of birth.
+ * @param dob - Date of birth as a string (format: YYYY-MM-DD).
+ * @returns The calculated age in years.
+ */
+export function calculateAge(dob: string | Date): string {
+    const birthDate = new Date(dob);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    // Adjust age if the current date is before the birth date this year
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return `${age}`;
+  }

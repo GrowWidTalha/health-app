@@ -39,7 +39,6 @@ const RequestSuccess = async ({
     duration: [1, "hour"],
     guests: [doctor.email]
   })
-  console.log(eventLink);
 
   return (
     <div className=" flex h-screen max-h-screen px-[5%]">

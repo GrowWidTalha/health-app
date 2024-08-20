@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 
+import { PrescriptionFormValues } from "@/components/forms/PresprictionFrom";
 import {  Doctor, RequestStatusType, RequestUserType } from "./appwrite.types";
 
 declare type SearchParamProps = {
@@ -76,3 +77,20 @@ declare interface CreateRequestParam {
   status: RequestStatusType;
   username: string,
 }
+export interface PrescriptionData {
+    hospitalName: string;
+    hospitalSlogan: string;
+    doctorName: string;
+    doctorSpecialty: string;
+    primaryColor: string;
+    patientName: string;
+    patientAge: string;
+    patientSex: string;
+    date: string;
+    prescriptionItems: PrescriptionFormValues;
+    hospitalAddress: string;
+    hospitalPhone: string;
+    hospitalEmail: string;
+    outputPath: string;
+  }
+ export type PrescriptionFormValues = z.infer<typeof prescriptionSchema>;

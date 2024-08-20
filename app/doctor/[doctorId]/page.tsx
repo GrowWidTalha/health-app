@@ -18,11 +18,6 @@ const DoctorDashboard = async ({ params: { doctorId } }: SearchParamProps) => {
   const appointments = filterAppointments(data.documents);
 
   return (
-    <div className="flex flex-col mx-auto max-w-7xl space-y-14 ">
-      <UnauthorizedAccess requiredRole="doctor" />
-      <NavBar text="Doctor Dashboard">
-        <UserDropDown type="doctor" doctor={doctor} />
-      </NavBar>
       <main className="admin-main">
         <section className="w-full space-y-4">
           <h1 className="header">Welcome {doctor.name}</h1>
@@ -124,7 +119,6 @@ const DoctorDashboard = async ({ params: { doctorId } }: SearchParamProps) => {
           </TabsContent>
         </Tabs>
       </main>
-    </div>
   );
 };
 
