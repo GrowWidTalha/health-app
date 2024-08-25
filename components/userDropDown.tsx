@@ -14,6 +14,7 @@ import appwriteService from "@/hooks/auth.lib";
 import { useRouter } from "next/navigation";
 import DoctorDialog from "./modals/DoctorDialog";
 import { Doctor } from "@/types/appwrite.types";
+import SettingsModal from "./modals/SettingsModal";
 
 const UserDropDown = ({
   type,
@@ -40,7 +41,7 @@ const UserDropDown = ({
           <User2 className="size-7 text-green-500" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-dark-500">
+      <DropdownMenuContent align="end" className="">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {type === "doctor" && (
@@ -65,6 +66,12 @@ const UserDropDown = ({
               </p>
             </DropdownMenuItem>
           </div>
+        )}
+        {type === "admin" && (
+                <DropdownMenu>
+
+                    <SettingsModal />
+                    </DropdownMenu>
         )}
 
         <DropdownMenuItem onClick={() => onLogOut()} className="cursor-pointer">

@@ -21,6 +21,39 @@ const config = {
     },
     extend: {
       colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
         green: {
           500: "#24AE7C",
           600: "#0D2A1F",
@@ -46,13 +79,13 @@ const config = {
           700: "#ABB8C4",
         },
       },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
-      },
-      backgroundImage: {
-        appointments: "url('/assets/images/appointments-bg.png')",
-        pending: "url('/assets/images/pending-bg.png')",
-        cancelled: "url('/assets/images/cancelled-bg.png')",
       },
       keyframes: {
         "accordion-down": {
@@ -72,6 +105,11 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+      },
+      backgroundImage: {
+        appointments: "url('/assets/images/appointments-bg.png')",
+        pending: "url('/assets/images/pending-bg.png')",
+        cancelled: "url('/assets/images/cancelled-bg.png')",
       },
     },
   },

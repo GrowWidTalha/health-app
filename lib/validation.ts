@@ -11,6 +11,10 @@ export const UserFormValidation = z.object({
     .string()
     .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
 });
+export const LoginFormValidation = z.object({
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  });
 
 export const PatientFormValidation = z.object({
   name: z
@@ -129,6 +133,17 @@ export const createDoctorSchema = z.object({
   areaOfExpertise: z.string().min(2,  "area of expertise must be greater than 2 characters"),
   avatar: z.custom<File[]>().optional() ,
 
+})
+export const settingsSchema = z.object({
+    hospitalName: z.string().min(2, "Name must be greater than 2 characters"),
+  email: z.string().email("Invalid email address"),
+  phone: z
+  .string()
+  .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+  address: z.string().min(2,  "Address must be greater than 2 characters"),
+  onlineAppointment: z.boolean(),
+  onlineAppointmentFees: z.string(),
+    slogan: z.string(),
 })
 
 export const createRequestSchema = z.object({

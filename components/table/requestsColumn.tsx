@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import AppointmentModal from "../modals/AppointmentModal";
+import { useState } from "react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -73,66 +74,74 @@ export const requestsColumn: ColumnDef<Request>[] = [
     id: "actions",
     header: () => <div className="pl-4">Actions</div>,
     cell: ({ row }) => {
-      const onApprove = async () => {
-        try {
-          const update = await updateRequest(row.original.$id, {
-            status: "approved",
-          });
-        } catch (error) {
-          console.log("error approving request: ", error);
-        }
-      };
-      const onReject = async () => {
-        try {
-          const update = await updateRequest(row.original.$id, {
-            status: "approved",
-          });
-        } catch (error) {
-          console.log("error approving request: ", error);
-        }
-      };
-      return (
-        <div className="px-4 py-3 flex items-center gap-2">
-          <ConfirmationModal
-            heading="Are you sure?"
-            onClick={onApprove}
-            description="Are you sure that you want to approve this request?. Make sure that you have took appropriate action before procedding."
-          >
-            <Button size="sm" className="bg-green-500 hover:bg-green-500/40">
-              Approve
-            </Button>
-          </ConfirmationModal>
-          <ConfirmationModal
-            heading="Are you sure?"
-            onClick={onApprove}
-            description="Are you sure that you want to reject this request?. Make sure that you have took appropriate action before procedding."
-          >
-            <Button className="bg-red-500 hover:bg-red-500/45">Deny</Button>
-          </ConfirmationModal>
-          {/* <Select>
-            <SelectTrigger className="w-[130px] bg-dark-300">
-              <SelectValue placeholder="Select Action" />
-            </SelectTrigger>
-            <SelectContent className="bg-dark-300">
-              <SelectItem value="reschedule" asChild>
-                <AppointmentModal
-                  appointment={row.original.appointment}
-                  type="schedule"
-                  userId={row.original.appointment.userId}
-                  patientId={row.original.appointment.patient.$id}
-                />
-              </SelectItem>
-              <SelectItem value="cancel" asChild> */}
+        const [selectedAction, setSelectedAction] = useState(null);
+
+        const onApprove = async () => {
+          try {
+            await updateRequest(row.original.$id, { status: "approved" });
+          } catch (error) {
+            console.log("Error approving request: ", error);
+          }
+        };
+
+        const onReject = async () => {
+          try {
+            await updateRequest(row.original.$id, { status: "rejected" });
+          } catch (error) {
+            console.log("Error rejecting request: ", error);
+          }
+        };
+
+        const handleActionChange = (value) => {
+          setSelectedAction(value);
+        };
+
+        return (
+          <div className="px-4 py-3 flex items-center gap-2">
+            <ConfirmationModal
+              heading="Are you sure?"
+              onClick={onApprove}
+              description="Are you sure that you want to approve this request? Make sure that you have taken appropriate action before proceeding."
+            >
+              <Button size="sm">Approve</Button>
+            </ConfirmationModal>
+
+            <ConfirmationModal
+              heading="Are you sure?"
+              onClick={onReject}
+              description="Are you sure that you want to reject this request? Make sure that you have taken appropriate action before proceeding."
+            >
+              <Button variant="destructive">Deny</Button>
+            </ConfirmationModal>
+
+            <Select onValueChange={handleActionChange}>
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Select Action" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="reschedule">Reschedule</SelectItem>
+                <SelectItem value="cancel">Cancel</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {selectedAction === 'reschedule' && (
               <AppointmentModal
-                  appointment={row.original.appointment}
-                  type="cancel"
-                  userId={row.original.appointment.userId}
-                  patientId={row.original.appointment.patient.$id}
-                />
-              {/* </SelectItem> */}
-            {/* </SelectContent> */}
-          {/* </Select> */}
-        </div>
+                appointment={row.original.appointment}
+                type="schedule"
+                userId={row.original.appointment.userId}
+                patientId={row.original.appointment.patient.$id}
+              />
+            )}
+
+            {selectedAction === 'cancel' && (
+              <AppointmentModal
+                appointment={row.original.appointment}
+                type="cancel"
+                userId={row.original.appointment.userId}
+                patientId={row.original.appointment.patient.$id}
+              />
+            )}
+          </div>
       );
     },
   },

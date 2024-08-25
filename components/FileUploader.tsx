@@ -5,6 +5,7 @@ import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 import { convertFileToUrl } from "@/lib/utils";
+import { UploadCloud } from "lucide-react";
 
 type FileUploaderProps = {
   files: File[] | undefined;
@@ -32,15 +33,10 @@ export const FileUploader = ({ files, onChange, defaultValue }: FileUploaderProp
         />
       ) : (
         <>
-          <Image
-            src="/assets/icons/upload.svg"
-            width={40}
-            height={40}
-            alt="upload"
-          />
+          <UploadCloud className="text-primary h-4" width={40} height={40}/>
           <div className="file-upload_label">
             <p className="text-14-regular ">
-              <span className="text-green-500">Click to upload </span>
+              <span className="text-primary">Click to upload </span>
               or drag and drop
             </p>
             <p className="text-12-regular">

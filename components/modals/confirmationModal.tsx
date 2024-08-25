@@ -27,7 +27,7 @@ const ConfirmationModal = ({  heading, description, onClick, children}: Confirma
       <AlertDialogTrigger asChild>
         {children}
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-dark-300">
+      <AlertDialogContent className="">
         <AlertDialogHeader>
           <AlertDialogTitle>{heading}</AlertDialogTitle>
           <AlertDialogDescription>
@@ -37,7 +37,7 @@ const ConfirmationModal = ({  heading, description, onClick, children}: Confirma
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onClick} asChild>
-            <Button className="bg-green-500">Continue</Button>
+            <Button className="">Continue</Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

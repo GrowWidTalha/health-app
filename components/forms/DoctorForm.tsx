@@ -139,7 +139,7 @@ const DoctorForm = ({ doctor, type, setOpen }: DoctorFormProps) => {
           </p>
         )}
 
-        <SubmitButton className={`${type === "delete" ? "bg-red-500" :"bg-green-500"} w-full`} isLoading={isLoading}>{type} Doctor</SubmitButton>
+        <SubmitButton className={`${type === "delete" ? "bg-red-500" :""} w-full`} isLoading={isLoading}>{type} Doctor</SubmitButton>
       </form>
     </Form>
   );

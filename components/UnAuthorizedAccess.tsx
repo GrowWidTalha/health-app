@@ -1,9 +1,10 @@
 "use client";
+import Loader from "@/app/loading";
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { Roles } from "@/types";
 import { LoaderPinwheel } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 interface UnAuthorizedAccessProps {
@@ -38,7 +39,7 @@ export default function UnauthorizedAccess({
   if (loading || !user) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-        <LoaderPinwheel className="size-8 animate-spin" />
+        <Loader />
       </div>
     );
   }
@@ -47,7 +48,7 @@ export default function UnauthorizedAccess({
   if (!isAuthorized) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-        <div className="mx-4 w-full max-w-md rounded-lg bg-dark-500 bg-background p-6 shadow-lg sm:p-8">
+        <div className="mx-4 w-full max-w-md rounded-lg  bg-background p-6 shadow-lg sm:p-8">
           <div className="space-y-4">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-foreground">

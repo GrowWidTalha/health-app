@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Patient } from "@/types/appwrite.types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { Button } from "../ui/button";
 
 const NotRegisteredModal = ({
@@ -24,7 +24,7 @@ const NotRegisteredModal = ({
   const router = useRouter();
   return (
     <AlertDialog open={patient ? false : true}>
-      <AlertDialogContent className="bg-dark-400">
+      <AlertDialogContent className="">
         <AlertDialogHeader>
           <AlertDialogTitle>Registration Pending</AlertDialogTitle>
           <AlertDialogDescription>
@@ -37,7 +37,7 @@ const NotRegisteredModal = ({
             onClick={() => router.push(`/patients/${userId}/register`)}
             asChild
           >
-            <Button className="bg-green-500">Continue</Button>
+            <Button className="">Continue</Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

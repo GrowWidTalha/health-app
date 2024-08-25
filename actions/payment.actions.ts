@@ -6,8 +6,9 @@ import { Appointment } from "@/types/appwrite.types"
 import { redirect } from "next/navigation"
 import { createAppointment } from "./appointment.actions"
 import { log } from "console"
+import { getCachedSetting } from "./settings.actions"
 export const checkoutOnlineAppointment = async (appointment: CreateAppointmentParams, price: number ) => {
-    log("in server checkout")
+    const hospitalData:any = await getCachedSetting()
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
     const appointmentData = await createAppointment(appointment)
     try {
@@ -17,7 +18,7 @@ export const checkoutOnlineAppointment = async (appointment: CreateAppointmentPa
             {
                 price_data: {
                     currency: "usd",
-                    unit_amount: price,
+                    unit_amount: hospitalData?.onlineAppointmentFees!,
                     product_data: {
                         name: appointment.reason,
                     }
@@ -33,6 +34,7 @@ export const checkoutOnlineAppointment = async (appointment: CreateAppointmentPa
           cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.patient}/new-appointment?cancelled=true`,
         });
         log("in before redirect")
+
         // redirect(session.url!)
         return session.url
       } catch (err) {

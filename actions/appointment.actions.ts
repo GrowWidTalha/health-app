@@ -1,7 +1,7 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { format, isToday } from "date-fns"; // Make sure to install date-fns for date manipulation
+import {  isToday } from "date-fns"; // Make sure to install date-fns for date manipulation
 
 import { Appointment } from "@/types/appwrite.types";
 
@@ -11,7 +11,7 @@ import {
   databases,
   messaging,
 } from "../lib/appwrite.config";
-import { formatDateTime, parseStringify } from "../lib/utils";
+import {  parseStringify } from "../lib/utils";
 import { revalidatePath } from "next/cache";
 import { CreateAppointmentParams, Status, UpdateAppointmentParams } from "@/types";
 
@@ -34,9 +34,11 @@ export const createAppointment = async (
         reason: appointment.reason,
         doctorId: appointment ? appointment.doctor?.$id : "",
         type: appointment.appointmentType,
-      }
-    );
-
+      },
+    )
+revalidatePath("/admin")
+revalidatePath("/doctor")
+revalidatePath("/patient")
     return parseStringify(newAppointment);
   } catch (error) {
     console.error("An error occurred while creating a new appointment:", error);
@@ -112,22 +114,8 @@ export const updateAppointment = async ({
     )
 
     if (!updateAppointment) throw Error;
-    // TODO: add SMS alert
-
-//     const smsMessage = `
-
-// Hi, it's carepulse,
-// ${
-//   type === "schedule"
-//     ? `Your appointment has been scheduled for ${
-//         formatDateTime(appointment.schedule).dateTime
-//       } with DR. ${appointment.doctor.name}`
-//     : `We regret to inform you that your appointment has been cancelled for the following reason.
-//   Reason: ${appointment.cancellationReason}`
-// }`;
-//     await sendSmsNotification(userId, smsMessage);
     revalidatePath("/admin");
-    revalidatePath("/patients/[userId]/dashboard");
+    revalidatePath("/patients");
     return parseStringify(updateAppointment);
   } catch (error) {
     console.log("Error while updating the appointment", error);
@@ -232,6 +220,8 @@ export const updateStatus = async (status: Status, appointmentId: string) => {
     )
 
     revalidatePath("/doctor")
+    revalidatePath("/admin")
+    revalidatePath("/patient")
 
     return parseStringify(document)
   } catch (error) {
@@ -248,9 +238,10 @@ export const updatePaymentStatus = async (appointmentId: string) => {
         isPaid: true
       }
     )
+    revalidatePath("/admin")
     return parseStringify(document)
   } catch (error) {
-
+    console.log("error updating payment status: ", error)
   }
 }
 export const addPresprictionUrlToDb = async (appointmentId: string, link: string) => {
@@ -263,8 +254,10 @@ export const addPresprictionUrlToDb = async (appointmentId: string, link: string
         presprictionLink: link
       }
     )
+    revalidatePath("/doctor")
+    revalidatePath("/patient")
     return parseStringify(document)
   } catch (error) {
-
+    console.log("error adding presprictionLink to db: ", error)
   }
 }

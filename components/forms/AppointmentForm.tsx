@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import { z } from "zod";
 import { SelectItem } from "@/components/ui/select";
 import {
   createAppointment,
+  getAppointment,
   updateAppointment,
 } from "@/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
@@ -25,6 +26,8 @@ import { CreateAppointmentParams, Status } from "@/types";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import PaymentConfirmationModal from "../modals/PaymentConfirmationModal";
+import { sendEmail } from "@/actions/mail.actions";
+import { AppointmentEmailTemplate, generateCancellationEmail, generateDoctorCancellationEmail, generateDoctorNotificationEmail } from "@/lib/mailTemplatex";
 
 export const AppointmentForm = ({
   userId,
@@ -109,8 +112,11 @@ export const AppointmentForm = ({
         }
 
         const newAppointment = await createAppointment(appointment);
+        const appointmentData = await getAppointment(newAppointment.$id)
+
 
         if (newAppointment) {
+            await sendEmail(appointmentData.patient.email, "healthcare@talhaali.xyz", "Your Appointment request has been submitted successfully", AppointmentEmailTemplate({ type: "request", appointment: appointmentData}))
           form.reset();
           router.push(
             `/patients/${userId}/new-appointment/success?appointmentId=${newAppointment.$id}`
@@ -134,9 +140,16 @@ export const AppointmentForm = ({
           type,
         };
 
-        const updatedAppointment = await updateAppointment(appointmentToUpdate);
+        const updatedAppointment: Appointment = await updateAppointment(appointmentToUpdate);
 
         if (updatedAppointment) {
+            if(updatedAppointment.status === "scheduled"){
+                await sendEmail(updatedAppointment.patient.email, "healthcare@talhaali.xyz", "Your Appointment has been scheduled successfully", AppointmentEmailTemplate({ type: "confirm", appointment: updatedAppointment}))
+                await sendEmail(updatedAppointment.patient.email, "healthcare@talhaali.xyz", "New appointment scheduled notification", generateDoctorNotificationEmail(updatedAppointment))
+            } else if (updatedAppointment.status === "cancelled"){
+                await sendEmail(updatedAppointment.patient.email, "healthcare@talhaali.xyz", "Your Appointment request has been cancelledj", generateCancellationEmail(updatedAppointment))
+                await sendEmail(updatedAppointment.doctor.email, "healthcare@talhaali.xyz", "Appointment cancellation notification", generateDoctorCancellationEmail(updatedAppointment))
+            }
           setOpen && setOpen(false);
           form.reset();
         }
@@ -220,7 +233,7 @@ export const AppointmentForm = ({
                   >
                     {["online", 'offline'].map((option, i) => (
                       <div key={option + i} className="radio-group">
-                        <RadioGroupItem value={option} id={option} />
+                        <RadioGroupItem disabled={type=== "schedule"} value={option} id={option} />
                         <Label htmlFor={option} className="cursor-pointer">
                           {option}
                         </Label>

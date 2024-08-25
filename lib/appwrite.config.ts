@@ -4,6 +4,7 @@ import * as sdk from "node-appwrite";
 
 export const {
   REQUEST_COLLECTION_ID,
+  SETTINGS_COLLECTION_ID,
   NEXT_PUBLIC_ENDPOINT: ENDPOINT,
   NEXT_PUBLIC_PROJECT_ID,
   API_KEY,

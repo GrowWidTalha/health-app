@@ -8,6 +8,7 @@ import { Appointment } from "@/types/appwrite.types"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import Link from "next/link"
+import RequestRescheduleModal from "@/components/modals/requestRescheduleModal"
 
 export default async function AppointmentDetailsPage({ params: { appointmentId } }: SearchParamProps) {
     const appointment: Appointment = await getAppointment(appointmentId)
@@ -57,8 +58,9 @@ export default async function AppointmentDetailsPage({ params: { appointmentId }
                     {appointment.status === "completed" && appointment.presprictionLink && (
                         <div className="space-y-2">
                             <p className="text-sm font-medium text-muted-foreground">Prescription</p>
-                            <Link href={appointment.presprictionLink}>
-                            <Button size={"sm"} className="gap-2 flex bg-green-500" >
+                            <Link href={appointment.presprictionLink} target="_blank">
+                            {/* {appointment.presprictionLink} */}
+                            <Button size={"sm"} className="gap-2 flex" >
                                 <Download className="size-4" /> Download
                             </Button>
                             </Link>
@@ -66,6 +68,15 @@ export default async function AppointmentDetailsPage({ params: { appointmentId }
                     )
                     }
                     </div>
+                   <div className="flex items-center justify-between">
+                   <h1 className="text-2xl font-bold">Actions</h1>
+                     {appointment.status !== "completed" && (
+                         <div className="space-y-2">
+                             <RequestRescheduleModal usertype="patient" appointmentId={appointment.$id}/>
+                         </div>
+                     )
+                     }
+                   </div>
                     </div>
                 {/* <Separator /> */}
 

@@ -7,6 +7,8 @@ import { getAppointment } from "@/actions/appointment.actions"
 import StatusBadge from "@/components/StatusBadge"
 import { formatDateTime } from "@/lib/utils"
 import PrescriptionForm from "@/components/forms/PresprictionFrom"
+import AppointmentCompletedModal from "@/components/modals/appointmentCompletedModal"
+import RequestRescheduleModal from "@/components/modals/requestRescheduleModal"
 
 export default async function AppointmentDetailsPage({ params: { appointmentId}}: SearchParamProps) {
     const appointment = await getAppointment(appointmentId)
@@ -46,11 +48,11 @@ export default async function AppointmentDetailsPage({ params: { appointmentId}}
         <Separator />
         <div className="grid gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">Prescription</h2>
-            <Button>
-              <SendIcon className="mr-2 h-4 w-4" />
-              Send Prescription
-            </Button>
+            <h2 className="text-xl font-bold">Actions</h2>
+            {appointment.status !== "completed" && (<div>
+            <AppointmentCompletedModal appointmentId={appointment.$id}/>
+            <RequestRescheduleModal appointmentId={appointment.$id} usertype="doctor" />
+            </div>)}
           </div>
     <PrescriptionForm appointment={appointment}/>
             </div>

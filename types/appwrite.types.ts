@@ -57,3 +57,23 @@ export interface Request extends Models.Document {
 
 export type RequestUserType = "patient" | "doctor"
 export type RequestStatusType = "rejected" |"approved" | "pending";
+
+export interface Settings extends Models.Document {
+    hospitalName: string,
+    address: string,
+    email: string,
+    phone: string,
+    onlineAppointment: boolean;
+    onlineAppointmentFees: number;
+    slogan: string;
+}
+
+export interface updateSettingsProps  {
+    hospitalName: string,
+    address: string,
+    email: string,
+    phone: string,
+    onlineAppointment: boolean;
+    slogan: string
+    onlineAppointmentFees: number;
+}

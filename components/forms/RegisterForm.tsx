@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -367,7 +367,7 @@ const RegisterForm = ({
             disabled={isReadOnly}
           />
           {isReadOnly && patient ? (
-            <Link href={patient.identificationDocumentURL}  target="_blank">
+            <Link href={patient.identificationDocumentURL!}  target="_blank">
             <Image
               src={patient.identificationDocumentURL!}
               alt={"data"}

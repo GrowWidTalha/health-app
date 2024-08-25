@@ -26,18 +26,18 @@ const RequestRescheduleModal = ({
   return (
     <Dialog open={open} onOpenChange={setopen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="bg-dark-300 gap-1">
+        <Button size="sm" variant="ghost" className=" gap-1">
           <CalendarIcon className="h-4 w-4" />
           Reschedule
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-dark-300">
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Request to reschedule appointment</DialogTitle>
           <DialogDescription>
             Fill these details to request a reschedule of this appointment
           </DialogDescription>
-          
+
               <CreateRequestForm
                 setOpen={setopen}
                 appointmentId={appointmentId}
@@ -46,7 +46,7 @@ const RequestRescheduleModal = ({
                 username={user.name}
               />
 
-          
+
         </DialogHeader>
       </DialogContent>
     </Dialog>

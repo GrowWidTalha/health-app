@@ -12,7 +12,7 @@ import {
   } from "@/components/ui/alert-dialog"
 import { CreateAppointmentParams } from "@/types";
   import { loadStripe } from '@stripe/stripe-js';
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 
 loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!

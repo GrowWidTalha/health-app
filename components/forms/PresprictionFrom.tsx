@@ -14,10 +14,15 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Delete, Download, Plus, Trash2 } from "lucide-react";
 import { uploadPrescription} from "@/actions/prescription.actions";
 import { Appointment } from "@/types/appwrite.types";
 import { PrescriptionFormValues } from "@/types";
+import { generatePrescriptionEmail } from "@/lib/mailTemplatex";
+import { sendEmail } from "@/actions/mail.actions";
+import SubmitButton from "../SubmitButton";
+import { useState } from "react";
+import Link from "next/link";
 
 // Define the validation schema using Zod
 const prescriptionSchema = z.object({
@@ -30,9 +35,9 @@ const prescriptionSchema = z.object({
   ),
 });
 
-// Define the form values type based on the schema
 
 export default function PrescriptionForm({ appointment }: { appointment: Appointment}) {
+    const [isLoading, setIsLoading] = useState(false)
   const { control, handleSubmit } = useForm<PrescriptionFormValues>({
     defaultValues: {
       prescriptions: [{ name: "", dosage: "", quantity: "" }],
@@ -46,11 +51,27 @@ export default function PrescriptionForm({ appointment }: { appointment: Appoint
   });
 
   const onSubmit =async (data: PrescriptionFormValues) => {
-    console.log("Submitted data:", data);
-    const prespriction = await uploadPrescription(appointment, data )
+    setIsLoading(true)
+    try {
+        const prespriction = await uploadPrescription(appointment, data )
         console.log(prespriction)
-  };
+        await sendEmail(appointment.patient.email, "healthcare@talhaali.xyz", "Grab your prespriction", generatePrescriptionEmail(appointment, prespriction!))
+    } catch (error) {
+        console.log("Error sending prescription: ", error);
+    }
+    setIsLoading(false)
+};
 
+  if(appointment.presprictionLink !== null){
+    return (
+        <Link href={appointment.presprictionLink} >
+        <Button>
+            <Download />
+            Prespriction
+        </Button>
+        </Link>
+    )
+  }
   return (
     <Card className="w-full max-w-2xl">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -109,21 +130,21 @@ export default function PrescriptionForm({ appointment }: { appointment: Appoint
               <Button
                 variant="outline"
                 onClick={() => remove(index)}
-                className="justify-self-end"
+                className="justify-self-end hover:bg-destructive hover:text-white"
               >
-                Remove
+                <Trash2 className="text-destructive"/>
               </Button>
             </div>
           ))}
         </CardContent>
         <CardFooter className="flex items-center justify-between">
-          <Button type="button" className="flex gap-2 bg-green-500" onClick={() => append({ name: "", dosage: "", quantity: "" })}>
+          <Button type="button" className="flex gap-2 " onClick={() => append({ name: "", dosage: "", quantity: "" })}>
             <Plus className="size-4"/>
             Add Prescription
           </Button>
-          <Button type="submit" className="flex gap-2 bg-green-500">
-            Send
-          </Button>
+          <SubmitButton className="max-w-fit" isLoading={isLoading}>
+            Send prescription
+          </SubmitButton>
         </CardFooter>
       </form>
     </Card>

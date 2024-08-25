@@ -17,7 +17,7 @@ const StatCard = ({ count, icon, label, type }: StatCardProps) => {
         "bg-appointments": type === "appointments",
         "bg-cancelled": type === "cancelled",
         "bg-pending": type === "pending",
-        "bg-gray-800": type === "total",
+        "": type === "total",
         // "bg-green-500": type === "total",
       })}
     >
@@ -32,9 +32,9 @@ const StatCard = ({ count, icon, label, type }: StatCardProps) => {
             height={32}
             width={32}
           />
-          
+
          )}
-        <p className="text-white text-32-bold ">{count}</p>
+        <p className=" text-32-bold ">{count}</p>
       </div>
 
       <p className="text-14-regular">{label}</p>

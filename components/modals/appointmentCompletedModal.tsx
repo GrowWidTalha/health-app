@@ -1,3 +1,4 @@
+"use client"
 import { CheckIcon } from "lucide-react";
 import {
   AlertDialog,
@@ -21,12 +22,12 @@ const AppointmentCompletedModal = ({appointmentId}: {appointmentId: string}) => 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="bg-dark-300 gap-1">
+        <Button size="sm" variant="ghost" className=" gap-1">
           <CheckIcon className="h-4 w-4" />
           Complete
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-dark-300">
+      <AlertDialogContent className="">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>

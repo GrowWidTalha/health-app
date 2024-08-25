@@ -1,3 +1,4 @@
+"use client"
 import {
   Dialog,
   DialogContent,
@@ -28,7 +29,7 @@ const AppointmentModal = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className={`capitalize ${type === "schedule" && "text-green-500"}`}
+          className={`${type === "cancel" ? "text-destructive": "text-primary"}`}
           variant={"ghost"}
         >
           {type}

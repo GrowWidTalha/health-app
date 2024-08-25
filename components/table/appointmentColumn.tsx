@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { formatDateTime } from "@/lib/utils";
 import { Appointment } from "@/types/appwrite.types";
 import { ColumnDef } from "@tanstack/react-table";
@@ -9,26 +8,33 @@ import AppointmentModal from "../modals/AppointmentModal";
 import StatusBadge from "../StatusBadge";
 import { Badge } from "../ui/badge";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-
 export const columns: ColumnDef<Appointment>[] = [
   {
     header: "ID",
-    cell: ({ row }) => <p className="text-14-medium">{row.index + 1}</p>,
+    cell: ({ row }) => <p className="text-14-medium text-black">{row.index + 1}</p>,
   },
   {
     accessorKey: "patient",
     header: "Patient",
     cell: ({ row }) => {
       const appointment = row.original;
-
       return (
         <Link href={`/patients/${appointment.userId}?type=admin`} >
-          <p className="text-14-medium underline">{appointment?.patient?.name}</p>
+          <p className="text-14-medium underline text-black">{appointment?.patient?.name}</p>
         </Link>
       );
     },
+    // Enable filtering by patient name or email
+    filterFn: (row, id, value) => {
+        const patient = row.original.patient;
+        if (!value) return true;
+        const searchValue = value.toLowerCase();
+        return (
+          patient?.name?.toLowerCase().includes(searchValue) ||
+          patient?.email?.toLowerCase().includes(searchValue)
+        );
+      },
+      enableGlobalFilter: true, // Important to allow global filtering
   },
   {
     accessorKey: "status",
@@ -40,16 +46,29 @@ export const columns: ColumnDef<Appointment>[] = [
         </div>
       );
     },
+    // Enable filtering by status
+    filterFn: (row, id, value) => {
+      if (value === null) return true;
+      return row.original.status === value;
+    },
   },
   {
     accessorKey: "schedule",
     header: "Appointment",
     cell: ({ row }) => {
       return (
-        <p className="text-14-regular min-w-[100px]">
+        <p className="text-14-regular text-black min-w-[100px]">
           {formatDateTime(row.original.schedule).dateTime}
         </p>
       );
+    },
+    // Enable sorting and filtering by date
+    sortingFn: "datetime",
+    filterFn: (row, id, value) => {
+      if (!value) return true;
+      const appointmentDate = new Date(row.original.schedule);
+      const filterDate = new Date(value);
+      return appointmentDate.toDateString() === filterDate.toDateString();
     },
   },
   {
@@ -66,21 +85,33 @@ export const columns: ColumnDef<Appointment>[] = [
             height={100}
             className="size-8"
           />
-          <p className="whitespace-nowrap"> Dr. {doctor?.name}</p>
+          <p className="whitespace-nowrap text-black"> Dr. {doctor?.name}</p>
         </div>
       );
     },
-  },
-    {
-        accessorKey: "type",
-        header: () => "Location",
-        cell: ({ row }) => {
-        const type = row.original.type
-        return (
-            <Badge variant={"outline"}>{type}</Badge>
-        );
-        },
+    // Enable filtering by doctor name or ID
+    filterFn: (row, id, value) => {
+      if (value === null) return true;
+      const doctor = row.original.doctor;
+      return doctor?.name?.toLowerCase().includes(value.toLowerCase()) ||
+             doctor?.$id?.toLowerCase().includes(value.toLowerCase()) || false;
     },
+  },
+  {
+    accessorKey: "type",
+    header: () => "Location",
+    cell: ({ row }) => {
+      const type = row.original.type
+      return (
+        <Badge variant={"default"}>{type}</Badge>
+      );
+    },
+    // Enable filtering by location
+    filterFn: (row, id, value) => {
+        if (value === null) return true;
+        return row.original.type === value;
+      },
+  },
   {
     id: "actions",
     header: () => <div className="pl-4">Actions</div>,

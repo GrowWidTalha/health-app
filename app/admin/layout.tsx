@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <div className="flex flex-col mx-auto max-w-7xl space-y-14">
       <UnauthorizedAccess requiredRole="admin" />
-      <NavBar text="Admin Dashboard">
+      <NavBar text="Admin Dashboard" href="/admin">
         <UserDropDown type="admin" />
       </NavBar>
       {children}

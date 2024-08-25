@@ -6,6 +6,7 @@ import { useAppwrite } from "@/hooks/useAppwrite";
 import { Patient } from "@/types/appwrite.types";
 import UnauthorizedAccess from "@/components/UnAuthorizedAccess";
 import { Roles, SearchParamProps } from "@/types";
+import Loader from "@/app/loading";
 
 // Define the type for props
 
@@ -16,13 +17,13 @@ const PatientDetailsPage = async ({ params: { userId }, searchParams }: SearchPa
   return (
     <div className="flex flex-col mx-auto max-w-7xl space-y-14">
       <UnauthorizedAccess requiredRole={type as Roles}  />
-      <NavBar text="Patient Details" />
+      <NavBar text="Patient Details" href="/patients"/>
       <div className="flex w-full justify-center">
         <div className="max-w-2xl w-full">
           {patient ? (
             <RegisterForm patient={patient} isReadOnly />
           ) : (
-            <div>Loading...</div>
+            <Loader />
           )}
           {/* Pass 'type' as a prop */}
         </div>

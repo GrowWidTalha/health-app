@@ -35,6 +35,14 @@ export const patientColumns: ColumnDef<User>[] = [
         </div>
       );
     },
+    filterFn: (row, id, value) => {
+        const email = row.original.email;
+        if (!value) return true;
+        const searchValue = value.toLowerCase();
+        return (
+          email.toLowerCase().includes(searchValue)
+        );
+      },
   },
   {
     accessorKey: "phone",

@@ -47,6 +47,7 @@ export const createDoctor = async ({
           avatar: file?.url,
         }
       );
+      revalidatePath("/admin")
       return document;
     }
   } catch (error) {
@@ -137,6 +138,7 @@ export const deleteDoctor = async (doctorId: string) => {
       DOCTOR_COLLECTION_ID!,
       doctorId
     );
+    revalidatePath("/admin")
 
     return parseStringify(doctor);
   } catch (error) {

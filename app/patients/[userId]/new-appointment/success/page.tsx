@@ -62,7 +62,7 @@ const RequestSuccess = async ({
             alt="success"
           />
           <h2 className="header mb-6 max-w-[600px] text-center">
-            Your <span className="text-green-500">appointment request</span> has
+            Your <span className="text-primary">appointment request</span> has
             been successfully submitted!
           </h2>
           <p>We&apos;ll be in touch shortly to confirm.</p>
@@ -97,13 +97,13 @@ const RequestSuccess = async ({
         </section>
 
         <div className="flex gap-4">
-          <Button variant="outline" className="shad-primary-btn" asChild>
+          <Button variant="default" asChild>
             <Link href={`/patients/${userId}/new-appointment`}>
               New Appointment
             </Link>
           </Button>
           <Button
-            variant={"ghost"}
+            variant={"outline"}
             className="hover:bg-accent hover:text-accent-foreground"
             asChild
           >

@@ -7,6 +7,7 @@ import {
 import { parseStringify } from "@/lib/utils";
 import { CreateRequestParam } from "@/types";
 import { ID } from "appwrite";
+import { revalidatePath } from "next/cache";
 import { Query } from "node-appwrite";
 
 export const createRequest = async ({
@@ -32,6 +33,10 @@ export const createRequest = async ({
       }
     );
 
+    revalidatePath("/admin")
+    revalidatePath("/patient")
+    revalidatePath("/doctor")
+
     return parseStringify(request);
   } catch (error) {
     console.log("Error creating request", error);
@@ -48,7 +53,7 @@ export const getAllRequests = async () => {
 
     return parseStringify(requests.documents);
   } catch (error) {
-    console.log("", error);
+    console.log("erroer retrieving requests", error);
   }
 };
 
@@ -61,7 +66,7 @@ export const getRequestsById = async (requestId: string) => {
     );
     return parseStringify(requests);
   } catch (error) {
-    console.log("", error);
+    console.log("error getting request by id", error);
   }
 };
 
@@ -74,7 +79,7 @@ export const getRequestsUserId = async (userId: string) => {
     );
     return parseStringify(requests.documents);
   } catch (error) {
-    console.log("", error);
+    console.log("error getting request by user id", error);
   }
 };
 
@@ -88,9 +93,12 @@ export const updateRequest = async (requestId: string, requestData: any) => {
         ...requestData,
       }
     );
+    revalidatePath("/admin")
+    revalidatePath("/patient")
+    revalidatePath("/doctor")
 
     return parseStringify(request);
   } catch (error) {
-    console.log("", error);
+    console.log("error updating the request", error);
   }
 };

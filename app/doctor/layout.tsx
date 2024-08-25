@@ -10,7 +10,7 @@ export default function DoctorLayout({
   return (
     <div className="flex flex-col mx-auto max-w-7xl space-y-14">
       <UnauthorizedAccess requiredRole="doctor" />
-      <NavBar text="Doctor Dashboard">
+      <NavBar text="Doctor Dashboard" href="/doctor">
         <UserDropDown type="doctor" />
       </NavBar>
       {children}

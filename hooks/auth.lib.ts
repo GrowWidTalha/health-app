@@ -28,33 +28,34 @@ interface LoginUserAccount {
 
 export class AppwriteService {
   //create a new record of user inside appwrite
-  async createUserAccount({ email, password, name }: CreateUserAccount) {
-    try {
-      const userAccount = await account.create(
-        ID.unique(),
-        email,
-        password,
-        name
-      );
-      if (userAccount) {
-        await updateLabel(userAccount.$id, "patient")
-       await this.login({ email, password });
-       return await  this.getCurrentUser()
-      }
-    } catch (error: any) {
-      if (error.type === "user_already_exists") {
-        
-        await this.login({ email, password });
-        return await this.getCurrentUser()
-      } else {
-        throw error;
-      }
+ async createUserAccount({ email, password, name }: CreateUserAccount) {
+  try {
+    const userAccount = await account.create(
+      ID.unique(),
+      email,
+      password,
+      name
+    );
+    if (userAccount) {
+      await updateLabel(userAccount.$id, "patient");
+      await this.login({ email, password });
+      return await this.getCurrentUser();
+    }
+  } catch (error: any) {
+    if (error.type === "user_already_exists") {
+      throw new Error("User already exists. Please try logging in.");
+    } else if (error.type === "password_invalid") {
+      throw new Error("Invalid password. Please try again.");
+    } else {
+      throw new Error("An error occurred while creating the account.");
     }
   }
+}
 
   async login({ email, password }: LoginUserAccount) {
     try {
-      return await account.createEmailPasswordSession(email, password);
+      await account.createEmailPasswordSession(email, password);
+      return this.getCurrentUser()
     } catch (error: any) {
       throw error;
     }

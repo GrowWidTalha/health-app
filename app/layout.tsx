@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster"
 import { Plus_Jakarta_Sans as FontSans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 
 import { cn } from "@/lib/utils";
+import Providers from "@/components/ProgressBarProvider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -29,13 +31,18 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-dark-300 font-sans antialiased",
+          "min-h-screen font-sans antialiased",
           fontSans.variable
         )}
       >
-          <ThemeProvider attribute="class" defaultTheme="dark">
+        {/* Progtessbar provider */}
+        <Providers>
+
+          <ThemeProvider attribute="class" defaultTheme="light">
             {children}
+            <Toaster />
           </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

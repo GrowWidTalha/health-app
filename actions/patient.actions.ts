@@ -12,6 +12,7 @@ import {
 import { parseStringify } from "../lib/utils";
 import { updateLabel } from "./auth.actions";
 import { uploadFile } from "./storage.actions";
+import { revalidatePath } from "next/cache";
 
 
 // GET USER
@@ -50,7 +51,7 @@ export const registerPatient = async ({
         ...patient,
       }
     );
-
+revalidatePath("/admin")
     return parseStringify(newPatient);
   } catch (error) {
     console.error("An error occurred while creating a new patient:", error);
@@ -65,8 +66,8 @@ export const getPatient = async (userId: string) => {
       PATIENT_COLLECTION_ID!,
       [Query.equal("userId", [userId])]
     );
-
-    return parseStringify(patients.documents[0]);
+if(!patients.documents[0]) return null
+    return parseStringify(patients.documents[0])
   } catch (error) {
     console.error(
       "An error occurred while retrieving the patient details:",

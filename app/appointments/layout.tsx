@@ -10,7 +10,7 @@ export default function AppointmentLayout({
   return (
     <div className="flex flex-col mx-auto max-w-7xl space-y-14">
       {/* <UnauthorizedAccess requiredRole="doctor" /> */}
-      <NavBar text="Appointment Details">
+      <NavBar text="Appointment Details" href="/patient">
         {/* <UserDropDown type="doctor" /> */}
       </NavBar>
       {children}

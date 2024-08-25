@@ -1,97 +1,100 @@
-"use client";
+'use client'
+import { ColumnDef } from "@tanstack/react-table"
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../ui/button";
-import { CalendarIcon, CheckIcon, MoreHorizontal } from "lucide-react";
-import { Appointment, Doctor } from "@/types/appwrite.types";
-import StatusBadge from "../StatusBadge";
-import { formatDateTime } from "@/lib/utils";
-import RequestRescheduleModal from "../modals/requestRescheduleModal";
-import AppointmentCompletedModal from "../modals/appointmentCompletedModal";
-import { Badge } from "../ui/badge";
-import Link from "next/link";
+import { Appointment } from "@/types/appwrite.types"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import { format, parse, isAfter, isBefore, isEqual, subDays, startOfDay } from "date-fns"
+import { formatDateTime } from "@/lib/utils"
+import StatusBadge from "../StatusBadge"
+
 export const DoctorAppointmentColumn: ColumnDef<Appointment>[] = [
   {
+    accessorKey: "id",
     header: "ID",
-    cell: ({ row }) => <p className="text-14-medium">{row.index + 1}</p>,
+    cell: ({ row }) => <div className="text-14-medium">{row.index + 1}</div>,
   },
   {
     accessorKey: "patient",
     header: "Patient",
     cell: ({ row }) => {
-      const patient = row.original;
-
+      const patient = row.original.patient
       return (
         <div className="flex flex-col gap-2">
-          <p className="text-14-medium">{patient.patient.name}</p>
-          <p className="text-14regular">{patient.patient.email}</p>
+          <p className="text-14-medium">{patient.name}</p>
+          <p className="text-14-regular">{patient.email}</p>
         </div>
-      );
+      )
     },
   },
   {
-    accessorKey: "date",
-    header: "Date",
+    accessorKey: "schedule",
+    header: "Date & Time",
     cell: ({ row }) => {
+      const schedule = row.getValue("schedule") as string
       return (
-        <div className="min-w-[115px]">
-          {formatDateTime(row.original.schedule).dateOnly}
+        <div>
+          <div>{formatDateTime(schedule).dateOnly}</div>
+          <div>{formatDateTime(schedule).timeOnly}</div>
         </div>
-      );
+      )
     },
-  },
+    filterFn: (row, columnId, filterValue) => {
+        if (!filterValue) return true;
+
+        const schedule = row.getValue(columnId) as string;
+
+        // Directly parse the ISO date string
+        const appointmentDate = new Date(schedule);
+        const today = startOfDay(new Date());
+
+
+        if (typeof filterValue === 'string') {
+          switch (filterValue) {
+            case 'today':
+              return isEqual(startOfDay(appointmentDate), today);
+            case 'upcoming':
+              return isAfter(appointmentDate, today);
+            case 'recent':
+              return isBefore(appointmentDate, today) && isAfter(appointmentDate, subDays(today, 7));
+            default:
+              return false;
+          }
+        } else if (filterValue instanceof Date) {
+          return isEqual(startOfDay(appointmentDate), startOfDay(filterValue));
+        }
+
+        return true;
+  }},
   {
-    accessorKey: "time",
-    header: "Time",
-    cell: ({ row }) => {
-      return (
-        <p className="text-14-regular min-w-[100px]">
-          {formatDateTime(row.original.schedule).timeOnly}
-        </p>
-      );
-    },
-  },
-  {
-    accessorKey: "Reason",
+    accessorKey: "reason",
     header: "Reason",
-    cell: ({ row }) => {
-      return (
-        <p className="text-14-regular min-w-[100px]">{row.original.reason}</p>
-      );
-    },
+    cell: ({ row }) => <div className="text-14-regular">{row.getValue("reason")}</div>,
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => {
-      return <StatusBadge status={row.original.status} />;
+    cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue === 'all') return true
+      return row.getValue(columnId) === filterValue
     },
   },
   {
     accessorKey: "type",
-    header: () => "Location",
-    cell: ({ row }) => {
-      const type = row.original.type
-      return (
-          <Badge variant={"outline"}>{type}</Badge>
-      );
-    },
+    header: "Location",
+    cell: ({ row }) => <Badge variant="outline">{row.getValue("type")}</Badge>,
   },
   {
     id: "actions",
-    header: () => <div className="pl-4">Actions</div>,
     cell: ({ row }) => {
+      const appointment = row.original
       return (
-        <div className="flex items-center gap-2">
-          <AppointmentCompletedModal appointmentId={row.original.$id}/>
-          <RequestRescheduleModal appointmentId={row.original.$id} usertype="doctor" />
-          <Link href={`/doctor/${row.original.doctor.$id}/${row.original.$id}/details`}>
-            <Button variant={"ghost"}>
-                View
-            </Button>
-          </Link>
-        </div>
-      );
+        <Link href={`/doctor/${appointment.doctor.$id}/${appointment.$id}/details`}>
+          <Button variant="ghost">View</Button>
+        </Link>
+      )
     },
   },
-];
+]

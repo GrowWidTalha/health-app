@@ -7,11 +7,13 @@ import { readFile, unlink, mkdir } from 'fs/promises';
 import { storage } from '@/lib/appwrite.config';
 import { ID } from 'appwrite';
 import { calculateAge, parseStringify } from '@/lib/utils';
-import { Appointment } from '@/types/appwrite.types';
+import { Appointment, Settings } from '@/types/appwrite.types';
 import { Buffer } from 'node:buffer';
 import { PrescriptionData, PrescriptionFormValues } from "@/types";
 import { InputFile } from 'node-appwrite';
 import { addPresprictionUrlToDb } from './appointment.actions';
+import { revalidatePath } from 'next/cache';
+import { getCachedSetting } from './settings.actions';
 
 // Create a directory if it doesn't exist
 const ensureDir = async (dirPath: string) => {
@@ -93,14 +95,8 @@ export const uploadPrescription = async (
   prescriptionItems: PrescriptionFormValues
 ): Promise<string | undefined> => {
   try {
-    const hospitalData = {
-      hospitalName: "Health Clinic",
-      hospitalSlogan: "We are here to help you",
-      hospitalAddress: "Street 212, City",
-      hospitalEmail: "clinic@example.com",
-      hospitalPhone: "+923052527557",
-      primaryColor: "#0000FF",
-    };
+    // @ts-ignore
+    const hospitalData: Settings = await getCachedSetting()
 
     const doctorData = appointment.doctor;
     const patientData = appointment.patient;
@@ -115,7 +111,12 @@ export const uploadPrescription = async (
 
     // Generate the PDF and save it locally
     await generatePrescriptionPDF({
-      ...hospitalData,
+      hospitalAddress: hospitalData?.address,
+      hospitalEmail: hospitalData.email,
+      hospitalName: hospitalData.hospitalName,
+      hospitalPhone: hospitalData.phone,
+      hospitalSlogan: hospitalData.slogan,
+      primaryColor: "#2663EA",
       doctorName: doctorData.name,
       doctorSpecialty: doctorData.areaOfExpertise,
       patientAge: calculateAge(patientData.birthDate),
@@ -140,7 +141,8 @@ export const uploadPrescription = async (
 
     // Clean up: Delete the locally generated PDF file
     await unlink(outputPath);
-
+revalidatePath("/doctor/[doctorId]/[appointmentId]/details")
+revalidatePath("/appointments/[appointmentId]")
     // Return the file's URL
     // https://cloud.appwrite.io/v1/storage/buckets/668cfd080008f74af297/files/66c45119003296f5305c/view?project=668931320031b041524b&mode=admin
 const url = `${process.env.NEXT_PUBLIC_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_BUCKET_ID}/files/${result.$id}/view?project=668931320031b041524b`;
