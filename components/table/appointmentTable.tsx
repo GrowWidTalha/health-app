@@ -133,7 +133,7 @@ value={()=> table.getColumn("appointment")?.getFilterValue() || null}
     <SelectItem value="all">All</SelectItem>
     {/* Populate this dynamically with your doctor list */}
     {doctors.map((doctor) => (
-        <SelectItem value={doctor.$id}>Dr. {doctor.name}</SelectItem>
+        <SelectItem key={doctor.$id} value={doctor.$id}>Dr. {doctor.name}</SelectItem>
     ))}
     {/* Add more doctors as needed */}
   </SelectContent>
