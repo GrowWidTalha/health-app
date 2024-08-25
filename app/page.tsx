@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { PatientForm } from "@/components/forms/PatientForm";
+import { logo } from "@/constants";
 
 const Home = () => {
   return (
@@ -19,13 +20,13 @@ const Home = () => {
       <div className="ml-[50%] w-[50%] h-full overflow-y-auto">
         <section className="remove-scrollbar container my-auto">
           <div className="sub-container max-w-[496px] px-6 mx-auto">
-            <Image
-              src="/assets/icons/logo-full.svg"
-              height={1000}
-              width={1000}
-              alt="CarePluse logo"
-              className="mb-12 h-10 w-fit"
-            />
+          <Image
+          src={logo}
+          alt="logo"
+          height={32}
+          width={162}
+          className="h-10 mb-2 max-w-md object-cover cursor-pointer"
+        />
 
             <PatientForm />
 

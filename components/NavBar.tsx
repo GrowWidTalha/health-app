@@ -1,4 +1,5 @@
 'use client'
+import { logo } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next13-progressbar";
@@ -17,11 +18,11 @@ const NavBar = ({
   return (
     <header className="admin-header">
         <Image
-          src={"/assets/icons/logo-full.svg"}
+          src={logo}
           alt="logo"
           height={32}
           width={162}
-          className="h-8 w-fit cursor-pointer"
+          className="h-10 max-w-md object-cover cursor-pointer"
           onClick={() => router.back()}
         />
       <div className="flex gap-3 items-center">

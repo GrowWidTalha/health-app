@@ -7,6 +7,7 @@ import { account, users } from "@/lib/appwrite.config";
 import UnauthorizedAccess from "@/components/UnAuthorizedAccess";
 import { SearchParamProps } from "@/types";
 import NotRegisteredModal from "@/components/modals/NotRegisteredModal";
+import { logo } from "@/constants";
 
 const Appointment = async ({ params: { userId } }: SearchParamProps) => {
   const patient = await getPatient(userId);
@@ -20,13 +21,13 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
       <UnauthorizedAccess requiredRole={"patient"}  />
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container max-w-[860px] flex-1 justify-between">
-          <Image
-            src="/assets/icons/logo-full.svg"
-            height={1000}
-            width={1000}
-            alt="logo"
-            className="mb-12 h-10 w-fit"
-          />
+        <Image
+          src={logo}
+          alt="logo"
+          height={32}
+          width={162}
+          className="h-10 mb-2 max-w-md object-cover cursor-pointer"
+        />
 
           <AppointmentForm
             patientId={patient?.$id}

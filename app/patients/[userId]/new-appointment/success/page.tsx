@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Doctors } from "@/constants";
+import { Doctors, logo } from "@/constants";
 import { getAppointment } from "@/actions/appointment.actions";
 import { formatDateTime } from "@/lib/utils";
 import * as Sentry from "@sentry/nextjs";
@@ -44,13 +44,13 @@ const RequestSuccess = async ({
     <div className=" flex h-screen max-h-screen px-[5%]">
       <div className="success-img">
         <Link href="/">
-          <Image
-            src="/assets/icons/logo-full.svg"
-            height={1000}
-            width={1000}
-            alt="logo"
-            className="h-10 w-fit"
-          />
+        <Image
+          src={logo}
+          alt="logo"
+          height={32}
+          width={162}
+          className="h-10 mb-2 max-w-md object-cover cursor-pointer"
+        />
         </Link>
 
         <section className="flex flex-col items-center">
@@ -107,7 +107,7 @@ const RequestSuccess = async ({
             className="hover:bg-accent hover:text-accent-foreground"
             asChild
           >
-            <Link href={`/patients/${userId}/dashboard`}>Go to dashboard</Link>
+            <Link href={`/patients/${user?.userId}/dashboard`}>Go to dashboard</Link>
           </Button>
         </div>
         <p className="copyright">© 2024 CarePluse</p>

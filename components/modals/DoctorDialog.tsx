@@ -35,10 +35,9 @@ const DoctorDialog = ({
           </p>
         ) : (
           <Button
-variant={"ghost"}
+variant={type === "create" ? "default" : "ghost"}
             className={clsx("capitalize ", {
               "text-blue-500": type === "update",
-              "bg-green-500": type === "create",
               "text-red-500": type === "delete",
             })}
           >

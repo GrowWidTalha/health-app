@@ -6,6 +6,7 @@ import { getPatient, getUser } from "@/actions/patient.actions";
 import * as Sentry from "@sentry/nextjs";
 import UnauthorizedAccess from "@/components/UnAuthorizedAccess";
 import { SearchParamProps } from "@/types";
+import { logo } from "@/constants";
 const Register = async ({ params: { userId } }: SearchParamProps) => {
   const user = await getUser(userId)
   const patient = await getPatient(userId);
@@ -17,13 +18,13 @@ const Register = async ({ params: { userId } }: SearchParamProps) => {
       <UnauthorizedAccess requiredRole={"patient"}  />
       <section className="remove-scrollbar container">
         <div className="sub-container max-w-[860px] flex-1 flex-col py-10">
-          <Image
-            src="/assets/icons/logo-full.svg"
-            height={1000}
-            width={1000}
-            alt="patient"
-            className="mb-12 h-10 w-fit"
-          />
+        <Image
+          src={logo}
+          alt="logo"
+          height={32}
+          width={162}
+          className="h-10 mb-2 max-w-md object-cover cursor-pointer"
+        />
 
           <RegisterForm user={user} />
 

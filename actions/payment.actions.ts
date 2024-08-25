@@ -18,7 +18,7 @@ export const checkoutOnlineAppointment = async (appointment: CreateAppointmentPa
             {
                 price_data: {
                     currency: "usd",
-                    unit_amount: hospitalData?.onlineAppointmentFees!,
+                    unit_amount: hospitalData?.onlineAppointmentFees! * 100,
                     product_data: {
                         name: appointment.reason,
                     }
@@ -30,8 +30,8 @@ export const checkoutOnlineAppointment = async (appointment: CreateAppointmentPa
              appointmentId: appointmentData.$id
           },
           mode: 'payment',
-          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.patient}/new-appointment/success?appointmentId=${appointmentData.$id}`,
-          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.patient}/new-appointment?cancelled=true`,
+          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.userId}/new-appointment/success?appointmentId=${appointmentData.$id}`,
+          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.userId}/new-appointment?cancelled=true`,
         });
         log("in before redirect")
 
