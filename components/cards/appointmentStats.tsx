@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Appointment } from '@/types/appointment'
+import { Appointment } from '@/types/appwrite.types'
 
 interface AppointmentStatsProps {
   appointments: Appointment[]
