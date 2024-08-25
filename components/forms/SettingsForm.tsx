@@ -68,7 +68,7 @@ const SettingsForm = () => {
 
   useEffect(() => {
     if (!isOfferingOnlineAppointment) {
-      form.setValue("onlineAppointmentFees", 0);
+      form.setValue("onlineAppointmentFees", "0");
     }
   }, [isOfferingOnlineAppointment, form]);
 
