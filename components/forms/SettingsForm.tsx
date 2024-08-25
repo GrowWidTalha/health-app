@@ -53,7 +53,8 @@ const SettingsForm = () => {
       // Handle form submission
       const updatedSettings = {
         ...values,
-        onlineAppointmentFees: values.onlineAppointment ? values.onlineAppointmentFees : 0,
+        // @ts-ignore
+        onlineAppointmentFees: values.onlineAppointment ? values.onlineAppointmentFees as number : 0,
       };
       await updateSettings(updatedSettings);
     } catch (error) {
