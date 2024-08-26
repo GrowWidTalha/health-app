@@ -143,6 +143,9 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               disabled={props.disabled}
               showTimeSelect={props.showTimeSelect ?? false}
               selected={field.value}
+              minDate={props.showTimeSelect ? new Date : undefined}
+            // TODO: Add excluded time here
+            isClearable
               // @ts-ignore
               onChange={(date: Date) => field.onChange(date)}
               timeInputLabel="Time:"

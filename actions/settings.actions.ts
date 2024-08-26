@@ -2,7 +2,6 @@
 import { DATABASE_ID, databases, SETTINGS_COLLECTION_ID } from "@/lib/appwrite.config"
 import { parseStringify } from "@/lib/utils"
 import { updateSettingsProps} from "@/types/appwrite.types"
-import { Query } from "node-appwrite";
 import NodeCache from 'node-cache';
 
 const settingsCache = new NodeCache({ stdTTL: 6000000000, checkperiod: 120 });
@@ -27,6 +26,7 @@ console.log("error updating settings: ", error)
 }
 export const getSettings = async() => {
     try {
+        console.log("SETTINGS_COLLECTION_ID: " , SETTINGS_COLLECTION_ID)
         const settings = await databases.getDocument(
             DATABASE_ID!,
             SETTINGS_COLLECTION_ID!,
@@ -35,6 +35,8 @@ export const getSettings = async() => {
 
           return parseStringify(settings);
     } catch (error) {
+        console.log("SETTINGS_COLLECTION_ID: " , SETTINGS_COLLECTION_ID)
+
 console.log("error retrieving settings: ", error)
     }
 }
