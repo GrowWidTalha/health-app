@@ -19,7 +19,7 @@ export const patientColumns: ColumnDef<User>[] = [
       const patient = row.original;
 
       return (
-        <Link href={`/patients/${row.original.$id}?type=admin`}>
+        <Link href={`/patients/${row.original?.$id}?type=admin`}>
           <p className="text-14-medium underline">{patient.name}</p>
         </Link>
       );

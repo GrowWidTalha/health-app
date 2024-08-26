@@ -22,7 +22,7 @@ const ActionCell = ({ row }: {row: any}) => {
 
   const onApprove = async () => {
     try {
-      await updateRequest(row.original.$id, { status: "approved" });
+      await updateRequest(row.original?.$id, { status: "approved" });
     } catch (error) {
       console.log("Error approving request: ", error);
     }
@@ -30,7 +30,7 @@ const ActionCell = ({ row }: {row: any}) => {
 
   const onReject = async () => {
     try {
-      await updateRequest(row.original.$id, { status: "rejected" });
+      await updateRequest(row.original?.$id, { status: "rejected" });
     } catch (error) {
       console.log("Error rejecting request: ", error);
     }
@@ -73,7 +73,7 @@ const ActionCell = ({ row }: {row: any}) => {
           appointment={row.original.appointment}
           type="schedule"
           userId={row.original.appointment.userId}
-          patientId={row.original.appointment.patient.$id}
+          patientId={row.original.appointment.patient?.$id}
         />
       )}
 
@@ -82,7 +82,7 @@ const ActionCell = ({ row }: {row: any}) => {
           appointment={row.original.appointment}
           type="cancel"
           userId={row.original.appointment.userId}
-          patientId={row.original.appointment.patient.$id}
+          patientId={row.original.appointment.patient?.$id}
         />
       )}
     </div>
