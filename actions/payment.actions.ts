@@ -30,8 +30,8 @@ export const checkoutOnlineAppointment = async (appointment: CreateAppointmentPa
              appointmentId: appointmentData.$id
           },
           mode: 'payment',
-          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.userId}/new-appointment/success?appointmentId=${appointmentData.$id}`,
-          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointment.userId}/new-appointment?cancelled=true`,
+          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointmentData.userId}/new-appointment/success?appointmentId=${appointmentData.$id}`,
+          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/patients/${appointmentData.userId}/new-appointment?cancelled=true`,
         });
         log("in before redirect")
 
