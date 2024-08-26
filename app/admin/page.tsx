@@ -85,43 +85,60 @@ const AdminPage = async () => {
             value="appointments"
             className="w-full h-fit p-4"
           >
-            <div className="flex flex-col gap-1 mb-3">
-              <h1 className="text-2xl font-bold">Upcoming Appointments</h1>
-              <p className="text-14-regular text-gray-400 ">
-                View and manage your upcoming appointments.
-              </p>
-            </div>
-            <AppointmentTable columns={columns} data={appointments.documents} doctors={doctors}/>
+            {appointments && (
+           <>
+                 <div className="flex flex-col gap-1 mb-3">
+                   <h1 className="text-2xl font-bold">Upcoming Appointments</h1>
+                   <p className="text-14-regular text-gray-400 ">
+                     View and manage your upcoming appointments.
+                   </p>
+                 </div>
+                 <AppointmentTable columns={columns} data={appointments.documents} doctors={doctors}/>
+           </>
+
+            )}
           </TabsContent>
           <TabsContent value="users" className=" w-full h-fit p-4">
-            <div className="flex flex-col gap-1 mb-3">
+            {users && (
+                <>
+                <div className="flex flex-col gap-1 mb-3">
               <h1 className="text-2xl font-bold">Users</h1>
               <p className="text-14-regular text-gray-400 ">
                 View and manage all your users
               </p>
             </div>
             <PatientTable columns={patientColumns} data={users.usersList} />
+                </>
+            )}
+
           </TabsContent>
           <TabsContent
             value="doctors"
             className=" w-full h-fit p-4"
           >
-            <div className="flex items-start justify-between ">
-              <div className="flex flex-col gap-1 mb-3">
-                <h1 className="text-2xl font-bold">Doctors</h1>
-                <p className="text-14-regular text-gray-400 ">
-                  View and manage all your doctors.
-                </p>
-              </div>
-              <DoctorDialog type="create" />
-            </div>
-            <DataTable columns={doctorColumns} data={doctors} />
+            {doctors && (
+               <>
+                 <div className="flex items-start justify-between ">
+                <div className="flex flex-col gap-1 mb-3">
+                 <h1 className="text-2xl font-bold">Doctors</h1>
+                 <p className="text-14-regular text-gray-400 ">
+                   View and manage all your doctors.
+                 </p>
+                </div>
+                <DoctorDialog type="create" />
+                </div>
+                <DataTable columns={doctorColumns} data={doctors} />
+               </>
+            )}
+
           </TabsContent>
           <TabsContent
             value="requests"
             className=" w-full h-fit p-4"
           >
-            <div className="flex items-start justify-between ">
+            {documents && (
+                <>
+                    <div className="flex items-start justify-between ">
               <div className="flex flex-col gap-1 mb-3">
                 <h1 className="text-2xl font-bold">Reschedule Requests</h1>
                 <p className="text-14-regular text-gray-400 ">
@@ -133,6 +150,9 @@ const AdminPage = async () => {
         columns={requestsColumn}
         data={documents}
       />
+                </>
+            )}
+
           </TabsContent>
         </Tabs>
       </main>
