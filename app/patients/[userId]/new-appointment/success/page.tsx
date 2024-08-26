@@ -39,7 +39,7 @@ const RequestSuccess = async ({
     duration: [1, "hour"],
     guests: [doctor.email]
   })
-
+if(!user) return null;
   return (
     <div className=" flex h-screen max-h-screen px-[5%]">
       <div className="success-img">
@@ -107,7 +107,7 @@ const RequestSuccess = async ({
             className="hover:bg-accent hover:text-accent-foreground"
             asChild
           >
-            <Link href={`/patients/${user?.userId}/dashboard`}>Go to dashboard</Link>
+            <Link href={`/patients/${userId}/dashboard`}>Go to dashboard</Link>
           </Button>
         </div>
         <p className="copyright">© 2024 CarePluse</p>
